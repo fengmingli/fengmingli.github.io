@@ -1,0 +1,976 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <link rel="icon" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="FengMing Li">
+  <meta name="keywords" content="技术,生活">
+  
+  <title>FengMing Li</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"lifengming.cn","root":"/","version":"1.8.11","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 100vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>FengMing Li</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/java/">
+                <i class="iconfont icon-archive-fill"></i>
+                JAVA系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/cncf/">
+                <i class="iconfont icon-archive-fill"></i>
+                CNCF系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/middleware/">
+                <i class="iconfont icon-archive-fill"></i>
+                中间件系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/why">
+                <i class="iconfont icon-archive-fill"></i>
+                为什么
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/link/">
+                <i class="iconfont icon-link-fill"></i>
+                友情链接
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                更多
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/doc/live/">
+                    <i class="iconfont icon-music"></i>
+                    生活
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/tags/">
+                    <i class="iconfont icon-tags-fill"></i>
+                    标签
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/archives/">
+                    <i class="iconfont icon-archive-fill"></i>
+                    归档
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/">
+                    <i class="iconfont icon-category-fill"></i>
+                    分类
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/dashboard.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="一件事分步做，持续做，坚持3年就会很不一样">
+              
+                一件事分步做，持续做，坚持3年就会很不一样
+              
+            </span>
+
+            
+          </div>
+
+          
+            <div class="scroll-down-bar">
+              <i class="iconfont icon-arrowdown"></i>
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div class="py-5" id="board"
+          style=margin-top:0>
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/02/19/middleware/dts/dtle%E5%88%9D%E4%BD%93%E9%AA%8C/" target="_self">
+          【DTS】DTLE 初体验
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/02/19/middleware/dts/dtle%E5%88%9D%E4%BD%93%E9%AA%8C/" target="_self">
+          
+          
+            
+          
+          
+            如果读者对数据同步没什么概念，可以阅读笔者往期博文：数据同步系列（一）：漫谈数据同步
+          
+
+DTLE 快速开始这里所有服务都使用 Docker 进行部署。没有 Docker 环境请先安装 Docker Install
+
+环境准备
+
+1234567891011121314151617181920212223242526## step-0：工具准备### j
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-02-19 00:00" pubdate>
+              2022-02-19
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/DTS/">DTS</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/DTS/">DTS</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/11/02/toolkit/JsonHandler/" target="_self">
+          【Skill】Json处理
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/11/02/toolkit/JsonHandler/" target="_self">
+          
+          
+            
+          
+          
+            先抛出一个问题：在 k8s 中，如果只知道 pod 的 uid 怎么可以快速的定位到是哪个pod？ 
+          
+
+前言对于 面向对象 的开发者来说，每天的业务代码会遇到大量的 JSON 处理。常见的序列化工具包：gson, fastjson, jackson , and so on。但是对于Json 的解析处理，尤其是复杂的 JSON 字符串，经常需要花费很大
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-11-02 00:00" pubdate>
+              2021-11-02
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Skill/">Skill</a>
+            
+              <a href="/tags/JSON/">JSON</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/10/11/golang/go-humanize/" target="_self">
+          【Golang】人性化Go语言库
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/10/11/golang/go-humanize/" target="_self">
+          
+          
+            
+          
+          
+            最近在 Github 逛的时候，发现的一个人性化的Go语言库: go-humanizeGithub repo
+          
+
+安装使用首先通过 go get 命令获取这个Go语言库。
+1go get github.com/dustin/go-humanize
+
+然后使用 import 导入 &quot;github.com/dustin/go-humanize&q
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-10-11 00:00" pubdate>
+              2021-10-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/Golang/">Golang</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Golang/">Golang</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/10/07/live/%E9%9C%80%E8%A6%81%E9%81%BF%E5%BC%80%E7%9A%84%E8%AF%8D%E6%B1%87/" target="_self">
+          【Skill】如何避免工作尴尬
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/10/07/live/%E9%9C%80%E8%A6%81%E9%81%BF%E5%BC%80%E7%9A%84%E8%AF%8D%E6%B1%87/" target="_self">
+          
+          
+            
+          
+          
+            读《重来》有感：工作中如何不损害交流？
+          
+
+在工作中有些词汇永远不要去使用，他们不是那些不文明用语。例如：”得”、“必须”、“不能”、“简单”、“只要”、“只有”以及“赶快”。这些词汇会损害交流。他们就像憎恨的代名词，为良好的互动就留埋下了一个个地雷，耽误了项目的进展。
+使用这些词汇后，交流便处于了 “非黑即白” 的状态下。但是真相往往不是非黑即白的。
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-10-07 00:00" pubdate>
+              2021-10-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/Skill/">Skill</a>
+            
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/09/26/cncf/%E6%BC%AB%E8%B0%88k8s%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E4%B8%8E%E5%AD%98%E5%82%A8%E5%8D%B7/" target="_self">
+          【Kubernetes】K8s应用存储与存储卷
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/09/26/cncf/%E6%BC%AB%E8%B0%88k8s%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E4%B8%8E%E5%AD%98%E5%82%A8%E5%8D%B7/" target="_self">
+          
+          
+            
+          
+          
+            众所周知，K8s 的持久化存储（Persistent Storage）保证了应用数据独立于应用生命周期而存在，那么是否也有如下的一些疑问：如果 pod 中的某一个容器在运行时异常退出，被 kubelet 重新拉起之后，如何保证之前容器产生的重要数据没有丢失？如果同一个 pod 中的多个容器想要共享数据，应该如何去做？K8s 内部的存储流程到底是怎样的？PV、PVC、Sto
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-09-26 00:00" pubdate>
+              2021-09-26
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/Kubernetes/">Kubernetes</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/PV/">PV</a>
+            
+              <a href="/tags/PVC/">PVC</a>
+            
+              <a href="/tags/Volumes/">Volumes</a>
+            
+              <a href="/tags/StorageClass/">StorageClass</a>
+            
+              <a href="/tags/csi/">csi</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/09/20/faq/cookie_expired/" target="_self">
+          解决新版谷歌chrome浏览器cookie跨域，cookie失效问题
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/09/20/faq/cookie_expired/" target="_self">
+          
+          
+            
+          
+          问题描述：最近，笔者公司开发同学反应，请求中使用了cookie和session，结果登录后自动设置的cookie无效，没有设置成功，但是在其他浏览器中显示是正常的。
+这是因为chrome浏览器80以上的版本为了防止CSRF攻击而增加了SameSite规则，且默认为打开。
+改设置会影响所有涉及到cookie的操作。
+想要携带cookie，必须将SameSite设为禁用。
+cookie失效原因解决方法
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-09-20 00:00" pubdate>
+              2021-09-20
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/FAQ/">FAQ</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Cookie/">Cookie</a>
+            
+              <a href="/tags/SSO/">SSO</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/09/05/golang/go-best-practice/" target="_self">
+          【Golang】Golang 编码最佳实践
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/09/05/golang/go-best-practice/" target="_self">
+          
+          
+            
+          
+          Go 语言实战: 编写可维护 Go 语言代码建议目录
+1. 指导原则
+1.1 简单性
+1.2 可读性
+1.3 生产力
+
+
+2. 标识符
+2.1 选择标识是为了清晰, 而不是简洁
+2.2 标识符长度
+2.3 不要用变量类型命名变量
+2.4 使用一致的命名风格
+2.5 使用一致的声明样式
+2.6 成为团队的合作者
+
+
+3. 注释
+3.1 关于变量和常量的注释应描述其内容而非其目的
+3.2 公共符号始终
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-09-05 00:00" pubdate>
+              2021-09-05
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/Golang/">Golang</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Golang/">Golang</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/30/middleware/kafka/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E6%96%B9%E6%A1%88%E9%80%89%E5%9E%8B/" target="_self">
+          数据同步系列：方案选型
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/30/middleware/kafka/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E6%96%B9%E6%A1%88%E9%80%89%E5%9E%8B/" target="_self">
+          
+          
+            
+          
+          
+            系列文章：数据同步系列（一）：漫谈数据同步数据同步系列（二）：数据同步方案选型数据同步系列（三）：什么是kafka connect数据同步系列（四）：数据同步之高可用数据同步系列（五）：数据同步之数据一致性数据同步系列（六）：数据同步之部署数据同步系列（七）：数据同步之踩坑
+          
+
+前言数据准实时复制（CDC）是目前行内实时数据需求大量使用的技术。本文把市
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-30 00:00" pubdate>
+              2021-08-30
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/">数据同步</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/CDC/">CDC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/10/toolkit/mac_alias/" target="_self">
+          Mac系统设置永久生效的别名
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/10/toolkit/mac_alias/" target="_self">
+          
+          
+            
+          
+          当前登录有效
+直接在本次登录的命令命令行中输入：alias ll=’ls -l’
+取消的命令为：unalias ll
+
+永久生效
+在当前用户下执行：vim ~/.bashrc 写入alias ll=’ls -l’ 并保存关闭；
+vim ~/.bash_profile 加入：source ~/.bashrc 使其生效
+重启在命令行输入ll就可以看到效果了
+
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-10 00:00" pubdate>
+              2021-08-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Skill/">Skill</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/07/middleware/kafka/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%BC%80%E7%AF%87/" target="_self">
+          数据同步系列：漫谈数据同步
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/07/middleware/kafka/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%BC%80%E7%AF%87/" target="_self">
+          
+          
+            
+          
+          
+            取消大小周了！！！当时听到这个消息的时候不相信。当确定消息真伪之后，心想着终于有更多的时间去干自己喜欢的事情了。总结是对自己过去工作最大的肯定。系列文章：数据同步系列（一）：漫谈数据同步数据同步系列（二）：数据同步方案选型数据同步系列（三）：什么是kafka connect数据同步系列（四）：数据同步之高可用数据同步系列（五）：数据同步之数据一致性数据同步系列（六）：数据
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-07 00:00" pubdate>
+              2021-08-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/">数据同步</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/CDC/">CDC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>LiFengMing</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

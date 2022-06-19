@@ -1,0 +1,598 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <link rel="icon" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="FengMing Li">
+  <meta name="keywords" content="技术,生活">
+  
+  <title>Linux 之 iptables 原理分析 - FengMing Li</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"lifengming.cn","root":"/","version":"1.8.11","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>FengMing Li</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/java/">
+                <i class="iconfont icon-archive-fill"></i>
+                JAVA系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/cncf/">
+                <i class="iconfont icon-archive-fill"></i>
+                CNCF系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/middleware/">
+                <i class="iconfont icon-archive-fill"></i>
+                中间件系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/why">
+                <i class="iconfont icon-archive-fill"></i>
+                为什么
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/link/">
+                <i class="iconfont icon-link-fill"></i>
+                友情链接
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                更多
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/doc/live/">
+                    <i class="iconfont icon-music"></i>
+                    生活
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/tags/">
+                    <i class="iconfont icon-tags-fill"></i>
+                    标签
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/archives/">
+                    <i class="iconfont icon-archive-fill"></i>
+                    归档
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/">
+                    <i class="iconfont icon-category-fill"></i>
+                    分类
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Linux 之 iptables 原理分析">
+              
+                Linux 之 iptables 原理分析
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-10-16 00:00" pubdate>
+        2021年10月16日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      867 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      9
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Linux 之 iptables 原理分析</h1>
+            
+            <div class="markdown-body">
+              <div class="note note-success">
+            <p><strong>问题：</strong> K8s中 Service 是怎么将Pod服务的端口</p>
+          </div>
+
+<h3 id="iptables-的四表五链"><a href="#iptables-的四表五链" class="headerlink" title="iptables 的四表五链"></a>iptables 的四表五链</h3><h4 id="四表"><a href="#四表" class="headerlink" title="四表"></a>四表</h4><blockquote>
+<p>iptables 的四个表 iptable_filter，iptable_mangle，iptable_nat，iptable_raw，默认表filter（没有指定表的时候就是filter表）。</p>
+</blockquote>
+<ul>
+<li><strong>filter 表</strong>：<ul>
+<li>用来对数据包进行过滤，具体的规则要求决定如何处理一个数据包。</li>
+<li>对应的内核模块为：<code>iptable_filter</code>，其表内包括三个链：<code>input</code>、<code>forward</code>、<code>output</code>;</li>
+</ul>
+</li>
+<li><strong>nat 表</strong>：<ul>
+<li>nat 全称：network address translation 网络地址转换，主要用来修改数据包的 IP 地址、端口号信息。</li>
+<li>对应的内核模块为：<code>iptable_nat</code>，其表内包括三个链：<code>prerouting</code>、<code>postrouting</code>、<code>output</code>;</li>
+</ul>
+</li>
+<li>mangle 表：<ul>
+<li>主要用来修改数据包的服务类型，生存周期，为数据包设置标记，实现流量整形、策略路由等。</li>
+<li>对应的内核模块为：<code>iptable_mangle</code>，其表内包括五个链：<code>prerouting</code>、postrouting<code>、</code>input<code>、</code>output<code>、</code>forward`;</li>
+</ul>
+</li>
+<li><strong>raw 表</strong>：<ul>
+<li>主要用来决定是否对数据包进行状态跟踪。</li>
+<li>对应的内核模块为：<code>iptable_raw</code>，其表内包括两个链：<code>output</code>、<code>prerouting</code>;</li>
+</ul>
+</li>
+</ul>
+<h4 id="五链"><a href="#五链" class="headerlink" title="五链"></a>五链</h4><blockquote>
+<p>iptables 的五个链 PREROUTING，INPUT，FORWARD，OUTPUT，POSTROUTING。</p>
+</blockquote>
+<ul>
+<li><strong>input 链</strong>：当收到访问防火墙本机地址的数据包时，将应用此链中的规则；</li>
+<li><strong>output 链</strong>：当防火墙本机向外发送数据包时，将应用此链中的规则；</li>
+<li><strong>forward 链</strong>：当收到需要通过防火中转发给其他地址的数据包时，将应用此链中的规则，注意如果需要实现forward转发需要开启Linux内核中的ip_forward功能；</li>
+<li><strong>prerouting 链</strong>：在对数据包做路由选择之前，将应用此链中的规则；</li>
+<li><strong>postrouting 链</strong>：在对数据包做路由选择之后，将应用此链中的规则；</li>
+</ul>
+<h3 id="iptables-的工作原理"><a href="#iptables-的工作原理" class="headerlink" title="iptables 的工作原理"></a>iptables 的工作原理</h3><p><img src="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/image/iptables-1.png" srcset="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif" lazyload alt="Netfilter挂载点"></p>
+<h4 id="iptables-的配置"><a href="#iptables-的配置" class="headerlink" title="iptables 的配置"></a>iptables 的配置</h4><p>在了解清楚iptables的工作原理和每个表以及链的作用之后，我们就可以根据其特点进行针对性的配置。</p>
+<p>iptables 的基本语法命令格式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs text">iptables [-t 表名] 管理选项 [链名] [匹配条件] [-j 控制类型]<br></code></pre></div></td></tr></table></figure>
+
+<ul>
+<li>表名、链名：指定<code>iptables</code>命令所操作的<code>表</code>和<code>链</code>，未指定表名时将默认使用<code>filter</code>表；</li>
+<li>管理选项：表示<code>iptables</code>规则的操作方式，比如：<code>插入</code>、<code>增加</code>、<code>删除</code>、<code>查看</code>等；</li>
+<li>匹配条件：指定要处理的数据包的特征，不符合指定条件的数据包不处理；</li>
+<li>控制类型：指数据包的处理方式，比如：<code>允许accept</code>、<code>拒绝reject</code>、<code>丢弃drop</code>、<code>日志LOG</code>等；</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">iptables 命令的常用管理选项<br>-A:在指定链的末尾添加一条新的规则<br>-D:删除指定链中的某一条规则，可删除指定序号或具体内容<br>-I:在指定链中插入一条新规则，未指定序号时默认作为第一条规则<br>-R:修改、替换指定链中的某一条规则，可指定规则序号或具体内容<br>-L:列出指定链中所有的规则，未指定链名，则列出表中的所有链<br>-F:清空指定链中所有的规则，未指定链名，则清空表中的所有链<br>-P:设置指定链的默认策略<br>-n:使用数字形式显示输出结果<br>-v:查看规则列表时显示详细的信息<br>-h:查看命令帮助信息<br>--line-numbers:查看规则列表时，同时显示规则在链中的顺序号<br></code></pre></div></td></tr></table></figure>
+
+
+
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zllong/p/7236881.html">https://www.cnblogs.com/zllong/p/7236881.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.netfilter.org/">https://www.netfilter.org/</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://ipset.netfilter.org/iptables.man.html#index">http://ipset.netfilter.org/iptables.man.html#index</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.thegeekstuff.com/2011/01/iptables-fundamentals/">https://www.thegeekstuff.com/2011/01/iptables-fundamentals/</a></p>
+</li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Linux/">Linux</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Linux/"> Linux</a>
+                    
+                  </div>
+                
+              </div>
+              
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/gitalk@1.7.0/dist/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"87b556302f561752d980","clientSecret":"8a7ba66af0d306771ccbe57237bb5c10a7ee3292","repo":"issue","owner":"fengmingli","admin":["lifengming"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'c5e88838989bba48c61e2f99fa0ba75d'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>LiFengMing</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

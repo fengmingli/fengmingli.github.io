@@ -1,0 +1,895 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <link rel="icon" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="FengMing Li">
+  <meta name="keywords" content="技术,生活">
+  
+  <title>分类 - FengMing Li</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"lifengming.cn","root":"/","version":"1.8.11","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 60vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>FengMing Li</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/java/">
+                <i class="iconfont icon-archive-fill"></i>
+                JAVA系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/cncf/">
+                <i class="iconfont icon-archive-fill"></i>
+                CNCF系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/middleware/">
+                <i class="iconfont icon-archive-fill"></i>
+                中间件系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/why">
+                <i class="iconfont icon-archive-fill"></i>
+                为什么
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/link/">
+                <i class="iconfont icon-link-fill"></i>
+                友情链接
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                更多
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/doc/live/">
+                    <i class="iconfont icon-music"></i>
+                    生活
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/tags/">
+                    <i class="iconfont icon-tags-fill"></i>
+                    标签
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/archives/">
+                    <i class="iconfont icon-archive-fill"></i>
+                    归档
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/">
+                    <i class="iconfont icon-category-fill"></i>
+                    分类
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="分类">
+              
+                分类
+              
+            </span>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div class="py-5" id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+
+
+
+
+
+<div class="category-list">
+  
+  
+  
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-1a9a671bb1da8c030da96f67497751c7" role="tab" data-toggle="collapse" href="#collapse-1a9a671bb1da8c030da96f67497751c7"
+        aria-expanded="false"
+      >
+        并发编程
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>7</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-1a9a671bb1da8c030da96f67497751c7" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-1a9a671bb1da8c030da96f67497751c7">
+    
+    
+      
+      
+        <a href="/2020/09/20/java/concurrent/linux%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bkfifo/" class="list-group-item list-group-item-action">
+          <span class="category-post">【编发编程｜六】Linux内核之kfifo</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/09/20/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97JCTools/" class="list-group-item list-group-item-action">
+          <span class="category-post">【并发编程｜五】神奇的高性能无锁队列JCTools</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/08/26/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97Disruptor/" class="list-group-item list-group-item-action">
+          <span class="category-post">【并发编程｜四】神奇的高性能无锁队列Disruptor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/08/21/java/concurrent/%E5%9B%9E%E9%A1%BEJDK%E5%8E%9F%E7%94%9F%E5%B9%B6%E5%8F%91%E9%98%9F%E5%88%97/" class="list-group-item list-group-item-action">
+          <span class="category-post">【并发编程｜三】漫谈JDK原生并发队列</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/08/20/java/concurrent/%E6%BC%AB%E8%B0%88JVM%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C/" class="list-group-item list-group-item-action">
+          <span class="category-post">【并发编程｜二】漫谈JVM内存屏障</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/08/20/java/concurrent/%E6%BC%AB%E8%B0%88%E5%86%85%E5%AD%98%E4%BC%AA%E5%85%B1%E4%BA%AB/" class="list-group-item list-group-item-action">
+          <span class="category-post">【并发编程｜一】漫谈内存伪共享</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/07/23/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0/" class="list-group-item list-group-item-action">
+          <span class="category-post">【并发系列｜开篇】高性能无锁队列简介</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-20dce2c6fa909a5cd62526615fe2788a" role="tab" data-toggle="collapse" href="#collapse-20dce2c6fa909a5cd62526615fe2788a"
+        aria-expanded="false"
+      >
+        工具
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/%E5%B7%A5%E5%85%B7/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>5</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-20dce2c6fa909a5cd62526615fe2788a" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-20dce2c6fa909a5cd62526615fe2788a">
+    
+    
+      
+      
+        <a href="/2021/11/02/toolkit/JsonHandler/" class="list-group-item list-group-item-action">
+          <span class="category-post">【Skill】Json处理</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2021/08/10/toolkit/mac_alias/" class="list-group-item list-group-item-action">
+          <span class="category-post">Mac系统设置永久生效的别名</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/12/29/toolkit/GoogleSearch/" class="list-group-item list-group-item-action">
+          <span class="category-post">Google检索技巧</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/12/26/toolkit/GitSearch/" class="list-group-item list-group-item-action">
+          <span class="category-post">Github检索技巧</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/05/20/toolkit/Hexo/" class="list-group-item list-group-item-action">
+          <span class="category-post">利用 Hexo + Github Actions 搭建个人博客</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-eda14e187a768b38eda999457c9cca1e" role="tab" data-toggle="collapse" href="#collapse-eda14e187a768b38eda999457c9cca1e"
+        aria-expanded="false"
+      >
+        Golang
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Golang/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>2</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-eda14e187a768b38eda999457c9cca1e" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-eda14e187a768b38eda999457c9cca1e">
+    
+    
+      
+      
+        <a href="/2021/10/11/golang/go-humanize/" class="list-group-item list-group-item-action">
+          <span class="category-post">【Golang】人性化Go语言库</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2021/09/05/golang/go-best-practice/" class="list-group-item list-group-item-action">
+          <span class="category-post">【Golang】Golang 编码最佳实践</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-9d91c9a795eafe5fc183083b74dfcead" role="tab" data-toggle="collapse" href="#collapse-9d91c9a795eafe5fc183083b74dfcead"
+        aria-expanded="false"
+      >
+        数据同步
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>2</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-9d91c9a795eafe5fc183083b74dfcead" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-9d91c9a795eafe5fc183083b74dfcead">
+    
+    
+      
+      
+        <a href="/2021/08/30/middleware/kafka/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E6%96%B9%E6%A1%88%E9%80%89%E5%9E%8B/" class="list-group-item list-group-item-action">
+          <span class="category-post">数据同步系列：方案选型</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2021/08/07/middleware/kafka/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%BC%80%E7%AF%87/" class="list-group-item list-group-item-action">
+          <span class="category-post">数据同步系列：漫谈数据同步</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-30136395f01879792198317c11831ea4" role="tab" data-toggle="collapse" href="#collapse-30136395f01879792198317c11831ea4"
+        aria-expanded="false"
+      >
+        Kubernetes
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Kubernetes/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>2</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-30136395f01879792198317c11831ea4" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-30136395f01879792198317c11831ea4">
+    
+    
+      
+      
+        <a href="/2021/09/26/cncf/%E6%BC%AB%E8%B0%88k8s%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E4%B8%8E%E5%AD%98%E5%82%A8%E5%8D%B7/" class="list-group-item list-group-item-action">
+          <span class="category-post">【Kubernetes】K8s应用存储与存储卷</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2021/06/26/cncf/k8s%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8A%80%E5%B7%A7/" class="list-group-item list-group-item-action">
+          <span class="category-post">【Kubernetes】K8s常见问题排查技巧</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-5cbd423ba089d87d72519e26729e23fd" role="tab" data-toggle="collapse" href="#collapse-5cbd423ba089d87d72519e26729e23fd"
+        aria-expanded="false"
+      >
+        项目工程
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%B7%A5%E7%A8%8B/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-5cbd423ba089d87d72519e26729e23fd" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-5cbd423ba089d87d72519e26729e23fd">
+    
+    
+      
+      
+        <a href="/2021/06/26/project/ReademeTemplate/" class="list-group-item list-group-item-action">
+          <span class="category-post">如何编写项目的 README.md</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-1fe917b01f9a3f87fa2d7d3b7643fac1" role="tab" data-toggle="collapse" href="#collapse-1fe917b01f9a3f87fa2d7d3b7643fac1"
+        aria-expanded="false"
+      >
+        FAQ
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/FAQ/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-1fe917b01f9a3f87fa2d7d3b7643fac1" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-1fe917b01f9a3f87fa2d7d3b7643fac1">
+    
+    
+      
+      
+        <a href="/2021/09/20/faq/cookie_expired/" class="list-group-item list-group-item-action">
+          <span class="category-post">解决新版谷歌chrome浏览器cookie跨域，cookie失效问题</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-a2089e7697bb46b042ba7bd3e2eb50f1" role="tab" data-toggle="collapse" href="#collapse-a2089e7697bb46b042ba7bd3e2eb50f1"
+        aria-expanded="false"
+      >
+        DTS
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/DTS/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-a2089e7697bb46b042ba7bd3e2eb50f1" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-a2089e7697bb46b042ba7bd3e2eb50f1">
+    
+    
+      
+      
+        <a href="/2022/02/19/middleware/dts/dtle%E5%88%9D%E4%BD%93%E9%AA%8C/" class="list-group-item list-group-item-action">
+          <span class="category-post">【DTS】DTLE 初体验</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-b26a1a0069605c69ea0c679b5e95fc17" role="tab" data-toggle="collapse" href="#collapse-b26a1a0069605c69ea0c679b5e95fc17"
+        aria-expanded="false"
+      >
+        Netty
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Netty/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-b26a1a0069605c69ea0c679b5e95fc17" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-b26a1a0069605c69ea0c679b5e95fc17">
+    
+    
+      
+      
+        <a href="/2020/06/19/middleware/netty/HashedWheelTimer/" class="list-group-item list-group-item-action">
+          <span class="category-post">神器的延迟任务处理之时间轮 HashedWheelTimer</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-45e23a169652aaf95ce80da844f3df0d" role="tab" data-toggle="collapse" href="#collapse-45e23a169652aaf95ce80da844f3df0d"
+        aria-expanded="false"
+      >
+        Elasticsearch
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Elasticsearch/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-45e23a169652aaf95ce80da844f3df0d" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-45e23a169652aaf95ce80da844f3df0d">
+    
+    
+      
+      
+        <a href="/2021/07/30/middleware/elasticsearch/%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C/" class="list-group-item list-group-item-action">
+          <span class="category-post">【Elasticsearch】ES别名替换</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-88bb766f0cc321759ed2eeb0bc06be5d" role="tab" data-toggle="collapse" href="#collapse-88bb766f0cc321759ed2eeb0bc06be5d"
+        aria-expanded="false"
+      >
+        Skill
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Skill/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+        
+          
+  <div id="collapse-88bb766f0cc321759ed2eeb0bc06be5d" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-88bb766f0cc321759ed2eeb0bc06be5d">
+    
+    
+      
+      
+        <a href="/2021/10/07/live/%E9%9C%80%E8%A6%81%E9%81%BF%E5%BC%80%E7%9A%84%E8%AF%8D%E6%B1%87/" class="list-group-item list-group-item-action">
+          <span class="category-post">【Skill】如何避免工作尴尬</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>LiFengMing</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

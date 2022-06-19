@@ -1,0 +1,612 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <link rel="icon" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="FengMing Li">
+  <meta name="keywords" content="技术,生活">
+  
+  <title>神器的延迟任务处理之时间轮 HashedWheelTimer - FengMing Li</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"lifengming.cn","root":"/","version":"1.8.11","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>FengMing Li</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/java/">
+                <i class="iconfont icon-archive-fill"></i>
+                JAVA系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/cncf/">
+                <i class="iconfont icon-archive-fill"></i>
+                CNCF系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/middleware/">
+                <i class="iconfont icon-archive-fill"></i>
+                中间件系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/why">
+                <i class="iconfont icon-archive-fill"></i>
+                为什么
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/link/">
+                <i class="iconfont icon-link-fill"></i>
+                友情链接
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                更多
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/doc/live/">
+                    <i class="iconfont icon-music"></i>
+                    生活
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/tags/">
+                    <i class="iconfont icon-tags-fill"></i>
+                    标签
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/archives/">
+                    <i class="iconfont icon-archive-fill"></i>
+                    归档
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/">
+                    <i class="iconfont icon-category-fill"></i>
+                    分类
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="神器的延迟任务处理之时间轮 HashedWheelTimer">
+              
+                神器的延迟任务处理之时间轮 HashedWheelTimer
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-06-19 00:00" pubdate>
+        2020年6月19日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.4k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      30
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">神器的延迟任务处理之时间轮 HashedWheelTimer</h1>
+            
+            <div class="markdown-body">
+              <h3 id="时间轮原理分析"><a href="#时间轮原理分析" class="headerlink" title="时间轮原理分析"></a>时间轮原理分析</h3><p>技术有时就源于生活，例如排队买票可以想到队列，公司的组织关系可以理解为树等，而时间轮算法的设计思想就来源于钟表。如下图所示，时间轮可以理解为一种环形结构，像钟表一样被分为多个 slot 槽位。每个 slot 代表一个时间段，每个 slot 中可以存放多个任务，使用的是链表结构保存该时间段到期的所有任务。时间轮通过一个时针随着时间一个个 slot 转动，并执行 slot 中的所有到期任务。</p>
+<p><img src="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/image/wheeltime.png" srcset="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif" lazyload alt="wheeltime"></p>
+<p>任务是如何添加到时间轮当中的呢？可以根据任务的到期时间进行取模，然后将任务分布到不同的 slot 中。如上图所示，时间轮被划分为 8 个 slot，每个 slot 代表 1s，当前时针指向 2。假如现在需要调度一个 3s 后执行的任务，应该加入 2+3=5 的 slot 中；如果需要调度一个 12s 以后的任务，需要等待时针完整走完一圈 round 零 4 个 slot，需要放入第 (2+12)%8=6 个 slot。</p>
+<p>那么当时针走到第 6 个 slot 时，怎么区分每个任务是否需要立即执行，还是需要等待下一圈 round，甚至更久时间之后执行呢？所以我们需要把 round 信息保存在任务中。例如图中第 6 个 slot 的链表中包含 3 个任务，第一个任务 round=0，需要立即执行；第二个任务 round=1，需要等待 1<em>8=8s 后执行；第三个任务 round=2，需要等待 2</em>8=8s 后执行。所以当时针转动到对应 slot 时，只执行 round=0 的任务，slot 中其余任务的 round 应当减 1，等待下一个 round 之后执行。</p>
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><h4 id="一切从构造函数开始"><a href="#一切从构造函数开始" class="headerlink" title="一切从构造函数开始"></a>一切从构造函数开始</h4><p>HashedWheelTimer 的构造函数清晰地列举出了几个核心属性：</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">HashedWheelTimer</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">            ThreadFactory threadFactory,</span></span><br><span class="hljs-params"><span class="hljs-function">            <span class="hljs-keyword">long</span> tickDuration, TimeUnit unit, <span class="hljs-keyword">int</span> ticksPerWheel, <span class="hljs-keyword">boolean</span> leakDetection,</span></span><br><span class="hljs-params"><span class="hljs-function">            <span class="hljs-keyword">long</span> maxPendingTimeouts)</span></span><br></code></pre></div></td></tr></table></figure>
+
+<ul>
+<li><strong>threadFactory</strong>，线程池，但是只创建了一个线程；</li>
+<li><strong>tickDuration</strong>，时针每次 tick 的时间，相当于时针间隔多久走到下一个 slot；</li>
+<li><strong>unit</strong>，表示 tickDuration 的时间单位；</li>
+<li><strong>ticksPerWheel</strong>，时间轮上一共有多少个 slot，默认 512 个。分配的 slot 越多，占用的内存空间就越大；</li>
+<li><strong>leakDetection</strong>，是否开启内存泄漏检测；</li>
+<li><strong>maxPendingTimeouts</strong>，最大允许等待任务数。</li>
+</ul>
+<h4 id="创建时间轮"><a href="#创建时间轮" class="headerlink" title="创建时间轮"></a>创建时间轮</h4><p>时间轮的创建就是为了创建 HashedWheelBucket 数组，每个 HashedWheelBucket 表示时间轮中一个 slot。</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> HashedWheelBucket[] createWheel(<span class="hljs-keyword">int</span> ticksPerWheel) &#123;<br>    <span class="hljs-comment">//ticksPerWheel may not be greater than 2^30</span><br>    checkInRange(ticksPerWheel, <span class="hljs-number">1</span>, <span class="hljs-number">1073741824</span>, <span class="hljs-string">&quot;ticksPerWheel&quot;</span>);<br><br>    ticksPerWheel = normalizeTicksPerWheel(ticksPerWheel); <br>    <span class="hljs-comment">//创建HashedWheelBucket 数组</span><br>    HashedWheelBucket[] wheel = <span class="hljs-keyword">new</span> HashedWheelBucket[ticksPerWheel];<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; wheel.length; i ++) &#123;<br>        wheel[i] = <span class="hljs-keyword">new</span> HashedWheelBucket();<br>    &#125;<br>    <span class="hljs-keyword">return</span> wheel;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>normalizeTicksPerWheel() 方法的作用就是找到不小于 ticksPerWheel 的最小 2 次幂，这个方法实现的并不好，可以参考 JDK HashMap 扩容 tableSizeFor 的实现进行性能优化，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">normalizeTicksPerWheel</span><span class="hljs-params">(<span class="hljs-keyword">int</span> ticksPerWheel)</span> </span>&#123;<br>      <span class="hljs-keyword">int</span> normalizedTicksPerWheel = <span class="hljs-number">1</span>;<br>      <span class="hljs-keyword">while</span> (normalizedTicksPerWheel &lt; ticksPerWheel) &#123;<br>          normalizedTicksPerWheel &lt;&lt;= <span class="hljs-number">1</span>;<br>      &#125;<br>      <span class="hljs-keyword">return</span> normalizedTicksPerWheel;<br>  &#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>从 HashedWheelBucket 的结构定义可以看出，HashedWheelBucket 内部是一个双向链表结构，双向链表的每个节点持有一个 HashedWheelTimeout 对象，HashedWheelTimeout 代表一个定时任务。每个 HashedWheelBucket 都包含双向链表 head 和 tail 两个 HashedWheelTimeout 节点，这样就可以实现不同方向进行链表遍历。</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HashedWheelBucket</span> </span>&#123;<br>     <span class="hljs-comment">// Used for the linked-list datastructure</span><br>     <span class="hljs-keyword">private</span> HashedWheelTimeout head;<br>     <span class="hljs-keyword">private</span> HashedWheelTimeout tail;<br>     <span class="hljs-comment">//省略。。。</span><br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>HashedWheelTimer 初始化的主要工作主要就是创建一个HashedWheelBucket的数组，其内部结构与上文中介绍的时间轮算法类似，如下图所示：</p>
+<p><img src="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/image/wheeltime-2.png" srcset="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif" lazyload alt="image-20210830115158721"></p>
+<h4 id="添加任务"><a href="#添加任务" class="headerlink" title="添加任务"></a>添加任务</h4><p>HashedWheelTimer 初始化完成后，使用 HashedWheelTimer 提供的 newTimeout() 方法添加任务。</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> Timeout <span class="hljs-title">newTimeout</span><span class="hljs-params">(TimerTask task, <span class="hljs-keyword">long</span> delay, TimeUnit unit)</span> </span>&#123;<br>    checkNotNull(task, <span class="hljs-string">&quot;task&quot;</span>);<br>    checkNotNull(unit, <span class="hljs-string">&quot;unit&quot;</span>);<br><br>    <span class="hljs-keyword">long</span> pendingTimeoutsCount = pendingTimeouts.incrementAndGet();<br><br>    <span class="hljs-keyword">if</span> (maxPendingTimeouts &gt; <span class="hljs-number">0</span> &amp;&amp; pendingTimeoutsCount &gt; maxPendingTimeouts) &#123;<br>        pendingTimeouts.decrementAndGet();<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RejectedExecutionException(<span class="hljs-string">&quot;Number of pending timeouts (&quot;</span><br>            + pendingTimeoutsCount + <span class="hljs-string">&quot;) is greater than or equal to maximum allowed pending &quot;</span><br>            + <span class="hljs-string">&quot;timeouts (&quot;</span> + maxPendingTimeouts + <span class="hljs-string">&quot;)&quot;</span>);<br>    &#125;<br>  <br><span class="hljs-comment">//1.如果work线程没有启动则启动work线程</span><br>    start(); <br><br>    <span class="hljs-comment">//计算任务的deadline</span><br>    <span class="hljs-keyword">long</span> deadline = System.nanoTime() + unit.toNanos(delay) - startTime; <br><br>    <span class="hljs-comment">// 防止溢出</span><br>    <span class="hljs-keyword">if</span> (delay &gt; <span class="hljs-number">0</span> &amp;&amp; deadline &lt; <span class="hljs-number">0</span>) &#123;<br>        deadline = Long.MAX_VALUE;<br>    &#125;<br>  <br>    <span class="hljs-comment">//2.创建定时任务 HashedWheelTimeout 对象</span><br>    HashedWheelTimeout timeout = <span class="hljs-keyword">new</span> HashedWheelTimeout(<span class="hljs-keyword">this</span>, task, deadline);<br>   <br>    <span class="hljs-comment">//3. 把定时任务 HashedWheelTimeout 添加到 Mpsc Queue </span><br>    timeouts.add(timeout);<br>    <span class="hljs-keyword">return</span> timeout;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>newTimeout() 方法主要做了三件事，分别为启动工作线程，创建定时任务，并把任务添加到 Mpsc Queue.</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">start</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-comment">//工作线程的启动之前，会通过 CAS 操作获取工作线程的状态，如果已经启动，则直接跳过。</span><br>      <span class="hljs-comment">//如果没有启动，再次通过 CAS 操作更改工作线程状态，然后启动工作线程。</span><br>       <span class="hljs-keyword">switch</span> (WORKER_STATE_UPDATER.get(<span class="hljs-keyword">this</span>)) &#123;<br>           <span class="hljs-keyword">case</span> WORKER_STATE_INIT:<br>               <span class="hljs-keyword">if</span> (WORKER_STATE_UPDATER.compareAndSet(<span class="hljs-keyword">this</span>, WORKER_STATE_INIT, WORKER_STATE_STARTED)) &#123;<br>                  <span class="hljs-comment">//直接调用的 Thread#start() 方法</span><br>                   workerThread.start();<br>               &#125;<br>               <span class="hljs-keyword">break</span>;<br>           <span class="hljs-keyword">case</span> WORKER_STATE_STARTED:<br>               <span class="hljs-keyword">break</span>;<br>           <span class="hljs-keyword">case</span> WORKER_STATE_SHUTDOWN:<br>               <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">&quot;cannot be started once stopped&quot;</span>);<br>           <span class="hljs-keyword">default</span>:<br>               <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error(<span class="hljs-string">&quot;Invalid WorkerState&quot;</span>);<br>       &#125;<br><br>       <span class="hljs-comment">// Wait until the startTime is initialized by the worker.</span><br>       <span class="hljs-keyword">while</span> (startTime == <span class="hljs-number">0</span>) &#123;<br>           <span class="hljs-keyword">try</span> &#123;<br>               startTimeInitialized.await();<br>           &#125; <span class="hljs-keyword">catch</span> (InterruptedException ignore) &#123;<br>               <span class="hljs-comment">// Ignore - it will be ready very soon.</span><br>           &#125;<br>       &#125;<br>   &#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>回到 newTimeout() 的主流程，接下来的逻辑就非常简单了。根据用户传入的任务延迟时间，可以计算出任务的 deadline，然后创建定时任务 HashedWheelTimeout 对象，最终把 HashedWheelTimeout 添加到 Mpsc Queue 中。</p>
+<p>看到这里，你会不会有个疑问，为什么不是将 HashedWheelTimeout 直接添加到时间轮中呢？而是先添加到 Mpsc Queue？Mpsc Queue 可以理解为多生产者单消费者的线程安全队列。（<a href="">Java并发系列：神奇的高性能无锁队列JCTools</a>）。可以猜到 HashedWheelTimer 是想借助 Mpsc Queue 保证多线程向时间轮添加任务的线程安全性。</p>
+<h4 id="工作线程-Worker"><a href="#工作线程-Worker" class="headerlink" title="工作线程 Worker"></a>工作线程 Worker</h4><p>工作线程 Worker 是时间轮的核心引擎，随着时针的转动，到期任务的处理都由 Worker 处理完成。</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Runnable</span> </span>&#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Set&lt;Timeout&gt; unprocessedTimeouts = <span class="hljs-keyword">new</span> HashSet&lt;Timeout&gt;();<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">long</span> tick;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-comment">// Initialize the startTime.</span><br>        startTime = System.nanoTime();<br>        <span class="hljs-keyword">if</span> (startTime == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-comment">// 我们在这里使用 0 作为未初始化值的指示符，因此请确保在初始化时它不是 0。</span><br>            startTime = <span class="hljs-number">1</span>;<br>        &#125;<br><br>        <span class="hljs-comment">// Notify the other threads waiting for the initialization at start().</span><br>        startTimeInitialized.countDown();<br><br>        <span class="hljs-keyword">do</span> &#123;<br>            <span class="hljs-comment">// 1. 计算下次 tick 的时间, 然后sleep 到下次 tick</span><br>            <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> deadline = waitForNextTick();<br>            <span class="hljs-comment">// 可能因为溢出或者线程中断，造成 deadline &lt;= 0</span><br>            <span class="hljs-keyword">if</span> (deadline &gt; <span class="hljs-number">0</span>) &#123;<br>               <span class="hljs-comment">// 2. 获取当前 tick 在 HashedWheelBucket 数组中对应的下标</span><br>                <span class="hljs-keyword">int</span> idx = (<span class="hljs-keyword">int</span>) (tick &amp; mask);<br>               <span class="hljs-comment">// 3. 移除被取消的任务</span><br>                processCancelledTasks();<br>                HashedWheelBucket bucket = wheel[idx];<br>                <span class="hljs-comment">// 4. 从 Mpsc Queue 中取出任务加入对应的 slot 中</span><br>                transferTimeoutsToBuckets();<br>                <span class="hljs-comment">// 5. 执行到期的任务</span><br>                bucket.expireTimeouts(deadline);<br>                tick++;<br>            &#125;<br>        &#125; <span class="hljs-keyword">while</span> (WORKER_STATE_UPDATER.get(HashedWheelTimer.<span class="hljs-keyword">this</span>) == WORKER_STATE_STARTED);<br><br>        <span class="hljs-comment">// 时间轮退出后，取出 slot 中未执行且未被取消的任务，并加入未处理任务列表，以便 stop() 方法返回</span><br>        <span class="hljs-keyword">for</span> (HashedWheelBucket bucket: wheel) &#123;<br>            bucket.clearTimeouts(unprocessedTimeouts);<br>        &#125;<br><br>        <span class="hljs-keyword">for</span> (;;) &#123;<br>          <span class="hljs-comment">// 将还没来得及添加到 slot 中的任务取出，如果任务未取消则加入未处理任务列表，以便 stop() 方法返回</span><br>            HashedWheelTimeout timeout = timeouts.poll();<br>            <span class="hljs-keyword">if</span> (timeout == <span class="hljs-keyword">null</span>) &#123;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (!timeout.isCancelled()) &#123;<br>               <span class="hljs-comment">//加入未处理任务队列</span><br>                unprocessedTimeouts.add(timeout);<br>            &#125;<br>        &#125;<br>        processCancelledTasks();<br>    &#125;<br>  <span class="hljs-comment">//省略。。。</span><br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+
+<p>工作线程 Worker 的核心执行流程是代码中的 do-while 循环，只要 Worker 处于 STARTED 状态，就会执行 do-while 循环，我们把该过程拆分成为以下几个步骤。</p>
+<ul>
+<li>通过 waitForNextTick() 方法计算出时针到下一次 tick 的时间间隔，然后 sleep 到下一次 tick。</li>
+<li>通过位运算获取当前 tick 在 HashedWheelBucket 数组中对应的下标</li>
+<li>移除被取消的任务。</li>
+<li>从 Mpsc Queue 中取出任务加入对应的 HashedWheelBucket 中。</li>
+<li>执行当前 HashedWheelBucket 中的到期任务。</li>
+</ul>
+<h4 id="停止时间轮"><a href="#停止时间轮" class="headerlink" title="停止时间轮"></a>停止时间轮</h4><p>回到 Timer 接口两个方法，newTimeout() 上文已经分析完了，接下来我们就以 stop() 方法为入口，看下时间轮停止都做了哪些工作。</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> Set&lt;Timeout&gt; <span class="hljs-title">stop</span><span class="hljs-params">()</span> </span>&#123;<br>     <span class="hljs-comment">// Worker 线程无法停止时间轮</span><br>    <span class="hljs-keyword">if</span> (Thread.currentThread() == workerThread) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<br>                HashedWheelTimer.class.getSimpleName() +<br>                        <span class="hljs-string">&quot;.stop() cannot be called from &quot;</span> +<br>                        TimerTask.class.getSimpleName());<br>    &#125;<br>    <span class="hljs-comment">// 尝试通过 CAS 操作将工作线程的状态更新为 SHUTDOWN 状态</span><br>    <span class="hljs-keyword">if</span> (!WORKER_STATE_UPDATER.compareAndSet(<span class="hljs-keyword">this</span>, WORKER_STATE_STARTED, WORKER_STATE_SHUTDOWN)) &#123;<br>        <span class="hljs-comment">// workerState can be 0 or 2 at this moment - let it always be 2.</span><br>        <span class="hljs-keyword">if</span> (WORKER_STATE_UPDATER.getAndSet(<span class="hljs-keyword">this</span>, WORKER_STATE_SHUTDOWN) != WORKER_STATE_SHUTDOWN) &#123;<br>            INSTANCE_COUNTER.decrementAndGet();<br>            <span class="hljs-keyword">if</span> (leak != <span class="hljs-keyword">null</span>) &#123;<br>                <span class="hljs-keyword">boolean</span> closed = leak.close(<span class="hljs-keyword">this</span>);<br>                <span class="hljs-keyword">assert</span> closed;<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> Collections.emptySet();<br>    &#125;<br><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-keyword">boolean</span> interrupted = <span class="hljs-keyword">false</span>;<br>        <span class="hljs-keyword">while</span> (workerThread.isAlive()) &#123;<br>           <span class="hljs-comment">// 中断 Worker 线程</span><br>            workerThread.interrupt();<br>            <span class="hljs-keyword">try</span> &#123;<br>                workerThread.join(<span class="hljs-number">100</span>);<br>            &#125; <span class="hljs-keyword">catch</span> (InterruptedException ignored) &#123;<br>                interrupted = <span class="hljs-keyword">true</span>;<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (interrupted) &#123;<br>            Thread.currentThread().interrupt();<br>        &#125;<br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        INSTANCE_COUNTER.decrementAndGet();<br>        <span class="hljs-keyword">if</span> (leak != <span class="hljs-keyword">null</span>) &#123;<br>            <span class="hljs-keyword">boolean</span> closed = leak.close(<span class="hljs-keyword">this</span>);<br>            <span class="hljs-keyword">assert</span> closed;<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">// 返回未处理任务的列表</span><br>    <span class="hljs-keyword">return</span> worker.unprocessedTimeouts();<br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+
+<p>如果当前线程是 Worker 线程，它是不能发起停止时间轮的操作的，是为了防止有定时任务发起停止时间轮的恶意操作。停止时间轮主要做了三件事，首先尝试通过 CAS 操作将工作线程的状态更新为 SHUTDOWN 状态，然后中断工作线程 Worker，最后将未处理的任务列表返回给上层。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>回顾一下 HashedWheelTimer 的几个核心成员。</p>
+<ul>
+<li><strong>HashedWheelTimeout</strong>，任务的封装类，包含任务的到期时间 deadline、需要经历的圈数 remainingRounds 等属性。</li>
+<li><strong>HashedWheelBucket</strong>，相当于时间轮的每个 slot，内部采用双向链表保存了当前需要执行的 HashedWheelTimeout 列表。</li>
+<li><strong>Worker</strong>，HashedWheelTimer 的核心工作引擎，负责处理定时任务。</li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Netty/">Netty</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+                    
+                  </div>
+                
+              </div>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/23/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【并发系列｜开篇】高性能无锁队列简介</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/05/20/toolkit/Hexo/">
+                        <span class="hidden-mobile">利用 Hexo + Github Actions 搭建个人博客</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/gitalk@1.7.0/dist/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"87b556302f561752d980","clientSecret":"8a7ba66af0d306771ccbe57237bb5c10a7ee3292","repo":"issue","owner":"fengmingli","admin":["lifengming"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '58c77cad8f6509a9e79d29a0e888399a'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>LiFengMing</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

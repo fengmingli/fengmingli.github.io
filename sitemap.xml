@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    
+    <url>
+        <loc>http://lifengming.cn/2020/06/19/middleware/netty/HashedWheelTimer/</loc>
+        
+        <lastmod>2022-05-28T11:11:47.393Z</lastmod>
+        
+        <date>1592496000000</date>
+        <title>神器的延迟任务处理之时间轮 HashedWheelTimer</title>
+        <path>2020/06/19/middleware/netty/HashedWheelTimer/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/08/20/java/concurrent/%E6%BC%AB%E8%B0%88%E5%86%85%E5%AD%98%E4%BC%AA%E5%85%B1%E4%BA%AB/</loc>
+        
+        <lastmod>2022-05-28T11:11:47.391Z</lastmod>
+        
+        <date>1597852800000</date>
+        <title>【并发编程｜一】漫谈内存伪共享</title>
+        <path>2020/08/20/java/concurrent/漫谈内存伪共享/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/08/26/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97Disruptor/</loc>
+        
+        <lastmod>2022-05-28T11:11:47.389Z</lastmod>
+        
+        <date>1598371200000</date>
+        <title>【并发编程｜四】神奇的高性能无锁队列Disruptor</title>
+        <path>2020/08/26/java/concurrent/高性能队列Disruptor/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/09/20/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97JCTools/</loc>
+        
+        <lastmod>2022-05-28T11:11:47.387Z</lastmod>
+        
+        <date>1600531200000</date>
+        <title>【并发编程｜五】神奇的高性能无锁队列JCTools</title>
+        <path>2020/09/20/java/concurrent/高性能队列JCTools/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/08/21/java/concurrent/%E5%9B%9E%E9%A1%BEJDK%E5%8E%9F%E7%94%9F%E5%B9%B6%E5%8F%91%E9%98%9F%E5%88%97/</loc>
+        
+        <lastmod>2022-05-28T11:06:46.344Z</lastmod>
+        
+        <date>1597939200000</date>
+        <title>【并发编程｜三】漫谈JDK原生并发队列</title>
+        <path>2020/08/21/java/concurrent/回顾JDK原生并发队列/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/09/26/cncf/%E6%BC%AB%E8%B0%88k8s%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E4%B8%8E%E5%AD%98%E5%82%A8%E5%8D%B7/</loc>
+        
+        <lastmod>2022-05-28T11:06:37.325Z</lastmod>
+        
+        <date>1632585600000</date>
+        <title>【Kubernetes】K8s应用存储与存储卷</title>
+        <path>2021/09/26/cncf/漫谈k8s应用存储与存储卷/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/doc/why/index.html</loc>
+        
+        <lastmod>2022-05-28T10:48:47.714Z</lastmod>
+        
+        <date>1653734927734</date>
+        <title>为什么</title>
+        <path>doc/why/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/link/index.html</loc>
+        
+        <lastmod>2022-05-26T15:42:41.870Z</lastmod>
+        
+        <date>1632931200000</date>
+        <title>友情链接</title>
+        <path>link/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/09/05/golang/go-best-practice/</loc>
+        
+        <lastmod>2022-03-04T15:44:25.519Z</lastmod>
+        
+        <date>1630771200000</date>
+        <title>【Golang】Golang 编码最佳实践</title>
+        <path>2021/09/05/golang/go-best-practice/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/10/07/live/%E9%9C%80%E8%A6%81%E9%81%BF%E5%BC%80%E7%9A%84%E8%AF%8D%E6%B1%87/</loc>
+        
+        <lastmod>2022-03-04T15:40:08.575Z</lastmod>
+        
+        <date>1633536000000</date>
+        <title>【Skill】如何避免工作尴尬</title>
+        <path>2021/10/07/live/需要避开的词汇/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/11/02/toolkit/JsonHandler/</loc>
+        
+        <lastmod>2022-03-04T15:39:34.947Z</lastmod>
+        
+        <date>1635782400000</date>
+        <title>【Skill】Json处理</title>
+        <path>2021/11/02/toolkit/JsonHandler/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/12/26/toolkit/GitSearch/</loc>
+        
+        <lastmod>2022-03-04T15:37:12.391Z</lastmod>
+        
+        <date>1608912000000</date>
+        <title>Github检索技巧</title>
+        <path>2020/12/26/toolkit/GitSearch/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/05/20/toolkit/Hexo/</loc>
+        
+        <lastmod>2022-03-04T15:36:28.483Z</lastmod>
+        
+        <date>1589904349000</date>
+        <title>利用 Hexo + Github Actions 搭建个人博客</title>
+        <path>2020/05/20/toolkit/Hexo/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/07/30/middleware/elasticsearch/%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C/</loc>
+        
+        <lastmod>2022-03-04T15:33:59.688Z</lastmod>
+        
+        <date>1627574400000</date>
+        <title>【Elasticsearch】ES别名替换</title>
+        <path>2021/07/30/middleware/elasticsearch/常见操作/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2022/02/19/middleware/dts/dtle%E5%88%9D%E4%BD%93%E9%AA%8C/</loc>
+        
+        <lastmod>2022-03-04T15:33:27.401Z</lastmod>
+        
+        <date>1645200000000</date>
+        <title>【DTS】DTLE 初体验</title>
+        <path>2022/02/19/middleware/dts/dtle初体验/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/09/20/java/concurrent/linux%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bkfifo/</loc>
+        
+        <lastmod>2022-03-04T15:31:38.168Z</lastmod>
+        
+        <date>1600531200000</date>
+        <title>【编发编程｜六】Linux内核之kfifo</title>
+        <path>2020/09/20/java/concurrent/linux内核数据结构之kfifo/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/08/20/java/concurrent/%E6%BC%AB%E8%B0%88JVM%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C/</loc>
+        
+        <lastmod>2022-03-04T15:29:48.605Z</lastmod>
+        
+        <date>1597852800000</date>
+        <title>【并发编程｜二】漫谈JVM内存屏障</title>
+        <path>2020/08/20/java/concurrent/漫谈JVM内存屏障/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/07/23/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0/</loc>
+        
+        <lastmod>2022-03-04T15:25:35.404Z</lastmod>
+        
+        <date>1595433600000</date>
+        <title>【并发系列｜开篇】高性能无锁队列简介</title>
+        <path>2020/07/23/java/concurrent/高性能队列概述/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/10/11/golang/go-humanize/</loc>
+        
+        <lastmod>2022-03-04T15:22:03.008Z</lastmod>
+        
+        <date>1633881600000</date>
+        <title>【Golang】人性化Go语言库</title>
+        <path>2021/10/11/golang/go-humanize/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/06/26/cncf/k8s%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8A%80%E5%B7%A7/</loc>
+        
+        <lastmod>2022-03-03T15:56:41.125Z</lastmod>
+        
+        <date>1624636800000</date>
+        <title>【Kubernetes】K8s常见问题排查技巧</title>
+        <path>2021/06/26/cncf/k8s常见问题排查技巧/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/series/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.081Z</lastmod>
+        
+        <date>1645965329081</date>
+        <title>Series</title>
+        <path>series/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/tags/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.081Z</lastmod>
+        
+        <date>1645965329081</date>
+        <title>Tags</title>
+        <path>tags/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/project/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.080Z</lastmod>
+        
+        <date>1645965329080</date>
+        <title>Project</title>
+        <path>project/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/08/10/toolkit/mac_alias/</loc>
+        
+        <lastmod>2022-02-27T12:35:29.074Z</lastmod>
+        
+        <date>1628524800000</date>
+        <title>Mac系统设置永久生效的别名</title>
+        <path>2021/08/10/toolkit/mac_alias/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/categories/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.074Z</lastmod>
+        
+        <date>1645965329074</date>
+        <title>categories</title>
+        <path>categories/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/about/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.074Z</lastmod>
+        
+        <date>1645965329074</date>
+        <title>About</title>
+        <path>about/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/doc/cncf/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.074Z</lastmod>
+        
+        <date>1645965329074</date>
+        <title>云原生</title>
+        <path>doc/cncf/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/doc/middleware/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.074Z</lastmod>
+        
+        <date>1645965329074</date>
+        <title>中间件专栏</title>
+        <path>doc/middleware/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/doc/java/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.074Z</lastmod>
+        
+        <date>1645965329074</date>
+        <title>Java 相关知识</title>
+        <path>doc/java/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/doc/live/index.html</loc>
+        
+        <lastmod>2022-02-27T12:35:29.074Z</lastmod>
+        
+        <date>1645965329074</date>
+        <title>做一个懂生活的程序员</title>
+        <path>doc/live/index.html</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/06/26/project/ReademeTemplate/</loc>
+        
+        <lastmod>2022-02-27T12:35:29.073Z</lastmod>
+        
+        <date>1624636800000</date>
+        <title>如何编写项目的 README.md</title>
+        <path>2021/06/26/project/ReademeTemplate/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2020/12/29/toolkit/GoogleSearch/</loc>
+        
+        <lastmod>2022-02-27T12:35:29.073Z</lastmod>
+        
+        <date>1609171424000</date>
+        <title>Google检索技巧</title>
+        <path>2020/12/29/toolkit/GoogleSearch/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/08/30/middleware/kafka/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E6%96%B9%E6%A1%88%E9%80%89%E5%9E%8B/</loc>
+        
+        <lastmod>2022-02-27T12:35:29.073Z</lastmod>
+        
+        <date>1630252800000</date>
+        <title>数据同步系列：方案选型</title>
+        <path>2021/08/30/middleware/kafka/数据同步方案选型/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/08/07/middleware/kafka/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%BC%80%E7%AF%87/</loc>
+        
+        <lastmod>2022-02-27T12:35:29.072Z</lastmod>
+        
+        <date>1628265600000</date>
+        <title>数据同步系列：漫谈数据同步</title>
+        <path>2021/08/07/middleware/kafka/数据同步开篇/</path>
+        
+        <desc></desc>
+    </url>
+    
+    <url>
+        <loc>http://lifengming.cn/2021/09/20/faq/cookie_expired/</loc>
+        
+        <lastmod>2022-02-27T12:35:29.071Z</lastmod>
+        
+        <date>1632067200000</date>
+        <title>解决新版谷歌chrome浏览器cookie跨域，cookie失效问题</title>
+        <path>2021/09/20/faq/cookie_expired/</path>
+        
+        <desc></desc>
+    </url>
+    
+</urlset>

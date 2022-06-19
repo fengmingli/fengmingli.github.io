@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <link rel="icon" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="FengMing Li">
+  <meta name="keywords" content="技术,生活">
+  
+  <title>【Skill】Json处理 - FengMing Li</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"lifengming.cn","root":"/","version":"1.8.11","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>FengMing Li</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/java/">
+                <i class="iconfont icon-archive-fill"></i>
+                JAVA系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/cncf/">
+                <i class="iconfont icon-archive-fill"></i>
+                CNCF系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/middleware/">
+                <i class="iconfont icon-archive-fill"></i>
+                中间件系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/why">
+                <i class="iconfont icon-archive-fill"></i>
+                为什么
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/link/">
+                <i class="iconfont icon-link-fill"></i>
+                友情链接
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                更多
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/doc/live/">
+                    <i class="iconfont icon-music"></i>
+                    生活
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/tags/">
+                    <i class="iconfont icon-tags-fill"></i>
+                    标签
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/archives/">
+                    <i class="iconfont icon-archive-fill"></i>
+                    归档
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/">
+                    <i class="iconfont icon-category-fill"></i>
+                    分类
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="【Skill】Json处理">
+              
+                【Skill】Json处理
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-11-02 00:00" pubdate>
+        2021年11月2日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      19
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">【Skill】Json处理</h1>
+            
+            <div class="markdown-body">
+              <div class="note note-success">
+            <p>先抛出一个问题：在 k8s 中，如果只知道 pod 的 uid 怎么可以快速的定位到是哪个pod？ </p>
+          </div>
+
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>对于 <strong>面向对象</strong> 的开发者来说，每天的业务代码会遇到大量的 <code>JSON</code> 处理。常见的序列化工具包：gson<code>, </code>fastjson<code>, </code>jackson , and so on。但是对于Json 的解析处理，尤其是复杂的 JSON 字符串，经常需要花费很大的精力才得到预期的结果。那是否有什么彩蛋可以解决这个问题了，当然。今天主要推荐两种  JSON 处理工具：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stedolan.github.io/jq/">Jq 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/json-path/JsonPath">JsonPath 官网</a></li>
+</ul>
+<h3 id="Jq"><a href="#Jq" class="headerlink" title="Jq"></a>Jq</h3><p>相对 Jsonpath 而言，Jq 在 Linux，Mac，Windows  等操作系统中使用的比较多。</p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>Linux：<strong>sudo apt-get install jq</strong></p>
+<p>Max：<strong>brew install jq</strong></p>
+<p>Windows：<strong>chocolatey install jq</strong></p>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><ul>
+<li><p>数组操作，获取 ownerReferences 数组的值</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：&#123;&quot;foo&quot;: 42, &quot;bar&quot;: &quot;less interesting data&quot;&#125;<br>jq &#x27;.metadata.ownerReferences[]&#x27; jq.json<br>//输出：42<br></code></pre></div></td></tr></table></figure></li>
+<li><p>对象/数组 构造</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：&#123;&quot;user&quot;:&quot;stedolan&quot;,&quot;titles&quot;:[&quot;JQ Primer&quot;, &quot;More JQ&quot;]&#125;<br>jq &#x27;&#123;user, title: .titles[]&#125;&#x27;<br>//输出：<br>&#123;<br>  &quot;user&quot;: &quot;stedolan&quot;,<br>  &quot;title&quot;: &quot;JQ Primer&quot;<br>&#125;<br>&#123;<br>  &quot;user&quot;: &quot;stedolan&quot;,<br>  &quot;title&quot;: &quot;More JQ&quot;<br>&#125;<br></code></pre></div></td></tr></table></figure></li>
+<li><p>获取值的长度</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：[[1,2], &quot;string&quot;, &#123;&quot;a&quot;:2&#125;, null]<br>jq &#x27;.[] | length&#x27;<br>//输出：<br>2<br>6<br>1<br>0<br></code></pre></div></td></tr></table></figure></li>
+<li><p>获取数组中的键，关键字：keys</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：&#123;&quot;abc&quot;: 1, &quot;abcd&quot;: 2, &quot;Foo&quot;: 3&#125;<br>jq &#x27;keys&#x27;<br>//输出：<br>[<br>  &quot;Foo&quot;,<br>  &quot;abc&quot;,<br>  &quot;abcd&quot;<br>]<br></code></pre></div></td></tr></table></figure></li>
+<li><p>多个过滤关键字，关键字：，</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：&#123; &quot;foo&quot;: 42, &quot;bar&quot;: &quot;something else&quot;, &quot;baz&quot;: true&#125;<br>jq &#x27;.foo, .bar&#x27;<br>//输出：<br>42<br>&quot;something else&quot;<br></code></pre></div></td></tr></table></figure></li>
+<li><p>一个过滤器的管道输出到下一个过滤器，关键字：｜</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：[&#123;&quot;name&quot;:&quot;JSON&quot;, &quot;good&quot;:true&#125;, &#123;&quot;name&quot;:&quot;XML&quot;, &quot;good&quot;:false&#125;]<br>jq &#x27;.[] | .name&#x27;<br>//输出：<br>&quot;JSON&quot;<br>&quot;XML&quot;<br></code></pre></div></td></tr></table></figure></li>
+<li><p>如果 foo 返回 true，则输入不变，关键字：  select(foo)</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：[1,5,3,0,7]<br>jq &#x27;map(select(. &gt;= 2))&#x27;<br>//输出：[5,3,7]<br></code></pre></div></td></tr></table></figure></li>
+<li><p>为每个输入调用过滤器，关键字：map</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入[1,2,3]<br>jq &#x27;map(.+1)&#x27;<br>//输出[2,3,4]<br></code></pre></div></td></tr></table></figure></li>
+<li><p>条件语句，关键字：if-then-else-end</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：2<br>jq &#x27;if . == 0 then &quot;zero&quot; elif . == 1 then &quot;one&quot; else &quot;many&quot; end&#x27;<br>//输出：&quot;many&quot;<br></code></pre></div></td></tr></table></figure></li>
+<li><p>字符串插值，关键字：\()</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">//输入：42<br>jq &#x27;&quot;The input was \(.), which is one less than \(.+1)&quot;&#x27;<br>//输出：&quot;The input was 42, which is one less than 43&quot;<br></code></pre></div></td></tr></table></figure></li>
+</ul>
+<p>下面以一段 K8s 的一段原数据信息为例，进行实践。</p>
+<figure class="highlight json"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs json">&#123;<br>    <span class="hljs-attr">&quot;apiVersion&quot;</span>: <span class="hljs-string">&quot;v1&quot;</span>,<br>    <span class="hljs-attr">&quot;kind&quot;</span>: <span class="hljs-string">&quot;Pod&quot;</span>,<br>    <span class="hljs-attr">&quot;metadata&quot;</span>: &#123;<br>        <span class="hljs-attr">&quot;annotations&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;kubernetes.io/psp&quot;</span>: <span class="hljs-string">&quot;ack.privileged&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/broker-configuration-hash&quot;</span>: <span class="hljs-string">&quot;9a38330f594413a27516f7a4153c7c77ed8a0306&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/clients-ca-cert-generation&quot;</span>: <span class="hljs-string">&quot;0&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/cluster-ca-cert-generation&quot;</span>: <span class="hljs-string">&quot;0&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/generation&quot;</span>: <span class="hljs-string">&quot;0&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/inter-broker-protocol-version&quot;</span>: <span class="hljs-string">&quot;2.7&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/kafka-version&quot;</span>: <span class="hljs-string">&quot;2.7.0&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/log-message-format-version&quot;</span>: <span class="hljs-string">&quot;2.7&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/logging-appenders-hash&quot;</span>: <span class="hljs-string">&quot;e893ac9f32f7958042d1c82477e3484b0f8ebad5&quot;</span><br>        &#125;,<br>        <span class="hljs-attr">&quot;creationTimestamp&quot;</span>: <span class="hljs-string">&quot;2021-10-11T22:19:13Z&quot;</span>,<br>        <span class="hljs-attr">&quot;generateName&quot;</span>: <span class="hljs-string">&quot;mk-falcon-kafka-&quot;</span>,<br>        <span class="hljs-attr">&quot;labels&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;app.kubernetes.io/instance&quot;</span>: <span class="hljs-string">&quot;mk-falcon&quot;</span>,<br>            <span class="hljs-attr">&quot;app.kubernetes.io/managed-by&quot;</span>: <span class="hljs-string">&quot;strimzi-cluster-operator&quot;</span>,<br>            <span class="hljs-attr">&quot;app.kubernetes.io/name&quot;</span>: <span class="hljs-string">&quot;kafka&quot;</span>,<br>            <span class="hljs-attr">&quot;app.kubernetes.io/part-of&quot;</span>: <span class="hljs-string">&quot;strimzi-mk-falcon&quot;</span>,<br>            <span class="hljs-attr">&quot;controller-revision-hash&quot;</span>: <span class="hljs-string">&quot;mk-falcon-kafka-57f85c8bd5&quot;</span>,<br>            <span class="hljs-attr">&quot;statefulset.kubernetes.io/pod-name&quot;</span>: <span class="hljs-string">&quot;mk-falcon-kafka-0&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/cluster&quot;</span>: <span class="hljs-string">&quot;mk-falcon&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/kind&quot;</span>: <span class="hljs-string">&quot;Kafka&quot;</span>,<br>            <span class="hljs-attr">&quot;strimzi.io/name&quot;</span>: <span class="hljs-string">&quot;mk-falcon-kafka&quot;</span><br>        &#125;,<br>        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;mk-falcon-kafka-0&quot;</span>,<br>        <span class="hljs-attr">&quot;namespace&quot;</span>: <span class="hljs-string">&quot;falcon-dev&quot;</span>,<br>        <span class="hljs-attr">&quot;ownerReferences&quot;</span>: [<br>            &#123;<br>                <span class="hljs-attr">&quot;apiVersion&quot;</span>: <span class="hljs-string">&quot;apps/v1&quot;</span>,<br>                <span class="hljs-attr">&quot;blockOwnerDeletion&quot;</span>: <span class="hljs-literal">true</span>,<br>                <span class="hljs-attr">&quot;controller&quot;</span>: <span class="hljs-literal">true</span>,<br>                <span class="hljs-attr">&quot;kind&quot;</span>: <span class="hljs-string">&quot;StatefulSet&quot;</span>,<br>                <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;mk-falcon-kafka&quot;</span>,<br>                <span class="hljs-attr">&quot;uid&quot;</span>: <span class="hljs-string">&quot;30f35905-458d-4e0d-9316-9fdcdaceae78&quot;</span><br>            &#125;<br>        ],<br>        <span class="hljs-attr">&quot;resourceVersion&quot;</span>: <span class="hljs-string">&quot;119726597&quot;</span>,<br>        <span class="hljs-attr">&quot;selfLink&quot;</span>: <span class="hljs-string">&quot;/api/v1/namespaces/falcon-dev/pods/mk-falcon-kafka-0&quot;</span>,<br>        <span class="hljs-attr">&quot;uid&quot;</span>: <span class="hljs-string">&quot;b1b7091b-3c09-48e0-b015-25a22007f13b&quot;</span><br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<blockquote>
+<p>首先将上面 JSON 字符串保存到 jq.json 文件中。</p>
+</blockquote>
+<ul>
+<li><p>过滤器操作，获取指定 apiVersion 的值。语法：.${key}</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">jq &#x27;.apiVersion&#x27; jq.json<br></code></pre></div></td></tr></table></figure></li>
+<li><p>过滤器操作，获取指定子对象的 “strimzi.io/broker-configuration-hash” 的值。语法：.${key}.${key}</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">jq &#x27;.metadata.annotations.&quot;strimzi.io/broker-configuration-hash&quot;&#x27; jq.json<br></code></pre></div></td></tr></table></figure></li>
+</ul>
+<p>注意：如果 key 包含/或者其他等等，请使用””字符串进行。</p>
+<ul>
+<li><p>如果知道 k8s 的 uid 反查到 pod 的名称。如果使用 jq 的话那就简单了。<strong>（回答上面抛出的问题）</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">kubectl get pod -A -o json | jq &#x27;.items[] | select(.metadata.uid == &quot;6a1c56b9-3885-4cfa-86a7-f31796404550&quot;)&#x27;|jq &#x27;.metadata.labels.&quot;statefulset.kubernetes.io/pod-name&quot;&#x27;<br><br>//拓展<br>uid=6a1c56b9-3885-4cfa-86a7-f31796404550,获取其他的pod的名称，指定 uid 就行<br></code></pre></div></td></tr></table></figure></li>
+</ul>
+<h3 id="Jsonpath"><a href="#Jsonpath" class="headerlink" title="Jsonpath"></a>Jsonpath</h3><p>看过 K8s 源码的同学，对于 Jsonpath 肯定不陌生。通过非常简单的操作，就拿到想要的结果。 </p>
+<p>Jsonpath 的语法跟 Jq 很像，这里就不做过多的啰嗦。直接按照官网的 Demo 实操就行</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/json-path/JsonPath">Java Jsonpath 实操指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/oliveagle/jsonpath">Go Jsonpath 实操指南</a></li>
+</ul>
+<h3 id="友情链接"><a href="#友情链接" class="headerlink" title="友情链接"></a>友情链接</h3><ul>
+<li><p><a target="_blank" rel="noopener" href="https://jqplay.org/s/_7uGMWvmUh#">Jq 在线练习场</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.ivtool.com/jsonpath-parser/">Jathpath 在线练习场</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://stedolan.github.io/jq/manual/">Jq开发手册</a></p>
+</li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Skill/">Skill</a>
+                    
+                      <a class="hover-with-bg" href="/tags/JSON/">JSON</a>
+                    
+                  </div>
+                
+              </div>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/02/19/middleware/dts/dtle%E5%88%9D%E4%BD%93%E9%AA%8C/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【DTS】DTLE 初体验</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/11/golang/go-humanize/">
+                        <span class="hidden-mobile">【Golang】人性化Go语言库</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/gitalk@1.7.0/dist/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"87b556302f561752d980","clientSecret":"8a7ba66af0d306771ccbe57237bb5c10a7ee3292","repo":"issue","owner":"fengmingli","admin":["lifengming"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'e514f0d21d3001c17351f3d251aed336'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>LiFengMing</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

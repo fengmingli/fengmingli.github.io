@@ -1,0 +1,646 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <link rel="icon" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="FengMing Li">
+  <meta name="keywords" content="技术,生活">
+  
+  <title>【并发编程｜四】神奇的高性能无锁队列Disruptor - FengMing Li</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"lifengming.cn","root":"/","version":"1.8.11","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>FengMing Li</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/java/">
+                <i class="iconfont icon-archive-fill"></i>
+                JAVA系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/cncf/">
+                <i class="iconfont icon-archive-fill"></i>
+                CNCF系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/middleware/">
+                <i class="iconfont icon-archive-fill"></i>
+                中间件系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/why">
+                <i class="iconfont icon-archive-fill"></i>
+                为什么
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/link/">
+                <i class="iconfont icon-link-fill"></i>
+                友情链接
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                更多
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/doc/live/">
+                    <i class="iconfont icon-music"></i>
+                    生活
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/tags/">
+                    <i class="iconfont icon-tags-fill"></i>
+                    标签
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/archives/">
+                    <i class="iconfont icon-archive-fill"></i>
+                    归档
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/">
+                    <i class="iconfont icon-category-fill"></i>
+                    分类
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="【并发编程｜四】神奇的高性能无锁队列Disruptor">
+              
+                【并发编程｜四】神奇的高性能无锁队列Disruptor
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-26 00:00" pubdate>
+        2020年8月26日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      23
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">【并发编程｜四】神奇的高性能无锁队列Disruptor</h1>
+            
+            <div class="markdown-body">
+              <h3 id="Disruptor为什么那么快？"><a href="#Disruptor为什么那么快？" class="headerlink" title="Disruptor为什么那么快？"></a>Disruptor为什么那么快？</h3><ul>
+<li>预分配 ringbuffer</li>
+<li>无锁（CAS）以及减小锁竞争</li>
+<li>缓存行填充，消除伪共享</li>
+<li>位运算的使用</li>
+</ul>
+<h3 id="生产者-消费者模型"><a href="#生产者-消费者模型" class="headerlink" title="生产者/消费者模型"></a>生产者/消费者模型</h3><p><img src="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/image/disruptor.png" srcset="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif" lazyload alt="Disruptor"></p>
+<h3 id="核心类关系"><a href="#核心类关系" class="headerlink" title="核心类关系"></a>核心类关系</h3><p><img src="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/image/disruptorClassDiagram.png" srcset="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif" lazyload alt="Disruptor Class Diagram"></p>
+<p>由上图可以看出，所有的操作都是对 <strong>RingBuffer</strong> 进行的操作。</p>
+<h3 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h3><ul>
+<li><strong>Ring Buffer（环形缓冲区）:</strong><br>环形缓冲区通常被认为是Disruptor的主要方面，但从3.0开始，环形缓冲区仅负责存储和更新通过Disruptor的数据（事件）。对于一些高级用例，可以完全由用户替换。</li>
+<li><strong>Sequence:</strong><br>Disruptor使用Sequences作为识别特定组件所在位置的方法。每个消费者（EventProcessor）都像Disruptor本身一样维护一个Sequence。大多数并发代码依赖于这些Sequence值的移动，因此Sequence支持AtomicLong的许多当前功能。事实上，两者之间唯一真正的区别是序列包含额外的功能，以防止序列和其他值之间的错误共享。</li>
+<li><strong>Sequencer:</strong><br>Sequencer是Disruptor的真正核心。该接口的两个实现（单生成器，多生产者）实现了所有并发算法，用于在生产者和消费者之间快速，正确地传递数据。</li>
+<li><strong>Sequence Barrier:</strong><br>序列屏障由序列发生器产生，包含对序列发生器中主要发布的序列和任何依赖性消费者的序列的引用。它包含确定是否有任何可供消费者处理的事件的逻辑。</li>
+<li><strong>Wait Strategy:</strong><br>等待策略确定消费者如何等待生产者将事件放入Disruptor。有关可选锁定的部分中提供了更多详细信息。</li>
+<li><strong>Event:</strong><br>从生产者传递给消费者的数据单位。事件没有特定的代码表示，因为它完全由用户定义。</li>
+<li><strong>EventProcessor:</strong><br>用于处理来自Disruptor的事件的主事件循环，并具有消费者序列的所有权。有一个名为 BatchEventProcessor的表示，它包含事件循环的有效实现，并将回调到使用的提供的EventHandler接口实现。</li>
+<li><strong>EventHandler:</strong><br>由用户实现并代表Disruptor的使用者的接口。</li>
+<li><strong>Producer:</strong><br>这是调用Disruptor以将事件排入队列的用户代码。这个概念在代码中也没有表示。</li>
+</ul>
+<h3 id="生产者写入数据"><a href="#生产者写入数据" class="headerlink" title="生产者写入数据"></a>生产者写入数据</h3><ul>
+<li><p><strong>写入数据的步骤包括：</strong></p>
+<p>1.占位</p>
+<p>2.移动游标并填充数据</p>
+<p>3.发布事件</p>
+</li>
+<li><p><strong>需要考虑的问题：</strong></p>
+<p><strong>1.如何避免生产者的生产速度过快而造成的新消息覆盖了未被消费的旧消息的问题</strong></p>
+<p>答：生产者再获取占位之前需要查看当前最慢的消费者位置，如果当前要发布的位置比消费者大，就等待;</p>
+<p><strong>2.如何解决多个生产者抢占生产位的问题</strong></p>
+<p>答：多个生产者通过CAS获取生产位；</p>
+</li>
+</ul>
+<h3 id="消费者消费数据"><a href="#消费者消费数据" class="headerlink" title="消费者消费数据"></a>消费者消费数据</h3><p>1.一个消费者一个线程；</p>
+<p>2.每个消费者都有一个游标表示已经消费到哪了（Sequence）；</p>
+<p>3.消息者会等待(waitFor)新数据，直到生产者通知(signal)；</p>
+<ul>
+<li><p><strong>需要考虑的问题：</strong></p>
+<p><strong>如何防止读取的时候，读到还未写的元素？</strong></p>
+<p>答：WaitStrategy（等待策略）</p>
+</li>
+</ul>
+<h3 id="走进源码"><a href="#走进源码" class="headerlink" title="走进源码"></a>走进源码</h3><h4 id="生产者"><a href="#生产者" class="headerlink" title="生产者"></a>生产者</h4><p>笔者做实践 Disruptor 的时候，对生产者做了一次封装。这里可以通过 add()方法熟悉 disruptor的写入过程。</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DisruptorQueue</span>&lt;<span class="hljs-title">T</span>&gt; </span>&#123;<br>    <span class="hljs-keyword">private</span> Disruptor&lt;ObjectEvent&lt;T&gt;&gt; disruptor;<br>    <span class="hljs-keyword">private</span> RingBuffer&lt;ObjectEvent&lt;T&gt;&gt; ringBuffer;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DisruptorQueue</span><span class="hljs-params">(Disruptor&lt;ObjectEvent&lt;T&gt;&gt; disruptor)</span> </span>&#123;<br>        <span class="hljs-keyword">this</span>.disruptor = disruptor;<br>        <span class="hljs-keyword">this</span>.ringBuffer = disruptor.getRingBuffer();<br>        <span class="hljs-keyword">this</span>.disruptor.start();<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">add</span><span class="hljs-params">(T t)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (t != <span class="hljs-keyword">null</span>) &#123;<br>           <span class="hljs-comment">//1.获取ringbuffer下一个可写的序列</span><br>            <span class="hljs-keyword">long</span> sequence = <span class="hljs-keyword">this</span>.ringBuffer.next();<br>            <span class="hljs-keyword">try</span> &#123;<br>               <span class="hljs-comment">//2.获取对象事件，并进行数据填充</span><br>                ObjectEvent&lt;T&gt; event = <span class="hljs-keyword">this</span>.ringBuffer.get(sequence);<br>                event.setObj(t);<br>            &#125; <span class="hljs-keyword">finally</span> &#123;<br>              <span class="hljs-comment">//3.发布事件</span><br>                <span class="hljs-keyword">this</span>.ringBuffer.publish(sequence);<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">addAll</span><span class="hljs-params">(List&lt;T&gt; ts)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (ts != <span class="hljs-keyword">null</span>) &#123;<br>            <span class="hljs-keyword">for</span> (T t : ts) &#123;<br>                <span class="hljs-keyword">if</span> (t != <span class="hljs-keyword">null</span>) &#123;<br>                    <span class="hljs-keyword">this</span>.add(t);<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br> <span class="hljs-comment">//省略。。。</span><br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+
+<p>从笔者封装可以看出 Disruptor 写入主要干了三件事：</p>
+<ol>
+<li>获取写一个可用的序列 sequence</li>
+<li>通过 sequence 定位，ringBuffer 中的槽位。并填充槽位</li>
+<li>发布事件</li>
+</ol>
+<p>基于上面三个步骤我们分别核心代码跟进</p>
+<p>1.跟进代码：com.lmax.disruptor.SingleProducerSequencer#next(int)</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">long</span> <span class="hljs-title">next</span><span class="hljs-params">(<span class="hljs-keyword">int</span> n)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (n &lt; <span class="hljs-number">1</span>)<br>    &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalArgumentException(<span class="hljs-string">&quot;n must be &gt; 0&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-keyword">long</span> nextValue = <span class="hljs-keyword">this</span>.nextValue;<br>    <br>    <span class="hljs-comment">//在一个写入序列</span><br>    <span class="hljs-keyword">long</span> nextSequence = nextValue + n;<br>   <br>    <span class="hljs-comment">//后退一圈，仔细分析 wrapPoint就是consumer的最小消费位点。</span><br>    <span class="hljs-keyword">long</span> wrapPoint = nextSequence - bufferSize;<br>    <br>    <span class="hljs-comment">// 获取上一次的最小消费位置</span><br>    <span class="hljs-keyword">long</span> cachedGatingSequence = <span class="hljs-keyword">this</span>.cachedValue;<br>    <br>    <span class="hljs-comment">//生产者速度快于消费者且超生产一个rangbuffer大小，则没有剩余空间</span><br>    <span class="hljs-keyword">if</span> (wrapPoint &gt; cachedGatingSequence || cachedGatingSequence &gt; nextValue)<br>    &#123;<br>      <span class="hljs-comment">//StoreLoad 更新游标</span><br>        cursor.setVolatile(nextValue);  <span class="hljs-comment">// StoreLoad fence</span><br><br>        <span class="hljs-keyword">long</span> minSequence;<br>       <br>       <span class="hljs-comment">//重新计算所有消费者里面的最小值位置</span><br>        <span class="hljs-keyword">while</span> (wrapPoint &gt; (minSequence = Util.getMinimumSequence(gatingSequences, nextValue)))<br>        &#123;<br>            <span class="hljs-comment">//防止死循环，让出CPu 暂停1纳秒，继续下一次计算</span><br>            LockSupport.parkNanos(<span class="hljs-number">1L</span>); <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Use waitStrategy to spin?</span><br>        &#125;<br><br>        <span class="hljs-keyword">this</span>.cachedValue = minSequence;<br>    &#125;<br>    <span class="hljs-comment">//下一个序列</span><br>    <span class="hljs-keyword">this</span>.nextValue = nextSequence;<br><br>    <span class="hljs-keyword">return</span> nextSequence;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+
+
+<p>2.跟进代码：com.lmax.disruptor.RingBufferFields#elementAt</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> E <span class="hljs-title">elementAt</span><span class="hljs-params">(<span class="hljs-keyword">long</span> sequence)</span></span><br><span class="hljs-function"></span>&#123; <span class="hljs-comment">//通过 UNSAFE 方法获取指定序列的元素</span><br>   <span class="hljs-keyword">return</span> (E) UNSAFE.getObject(entries, REF_ARRAY_BASE + ((sequence &amp; indexMask) &lt;&lt; REF_ELEMENT_SHIFT));<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+
+
+<p>3.跟进代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">publish</span><span class="hljs-params">(<span class="hljs-keyword">long</span> sequence)</span></span><br><span class="hljs-function">   </span>&#123;<br>       <span class="hljs-comment">//更新游标</span><br>       cursor.set(sequence);<br>       <span class="hljs-comment">//如果阻塞则唤醒</span><br>       waitStrategy.signalAllWhenBlocking();<br>   &#125;<br></code></pre></div></td></tr></table></figure>
+
+<p><img src="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/image/blocking.png" srcset="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif" lazyload alt="唤醒阻塞的消费者"></p>
+<p>由于有些策略是阻塞性的，必须需要手动唤醒才能进行消费。具体策略感兴趣的朋友可以去深扒，代码不是很难。</p>
+<h4 id="消费者"><a href="#消费者" class="headerlink" title="消费者"></a>消费者</h4><p>从封装的 DisruptorQueue 代码中可以看出，构造方法中 this.disruptor.start(); 方法。就是开启消费者线程。</p>
+<p>跟进 com.lmax.disruptor.dsl.Disruptor#start</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> RingBuffer&lt;T&gt; <span class="hljs-title">start</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    checkOnlyStartedOnce();<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">final</span> ConsumerInfo consumerInfo : consumerRepository)<br>    &#123;<br>      <span class="hljs-comment">// 开启消费线程，如果多个就开启多个线程消费</span><br>        consumerInfo.start(executor);<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> ringBuffer;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>继续跟进源代码到：com.lmax.disruptor.BatchEventProcessor#run</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (running.compareAndSet(IDLE, RUNNING))<br>    &#123;<br>        sequenceBarrier.clearAlert();<br><br>        notifyStart();<br>        <span class="hljs-keyword">try</span><br>        &#123;<br>            <span class="hljs-keyword">if</span> (running.get() == RUNNING)<br>            &#123;<br>              <span class="hljs-comment">//真正处理事件的地方</span><br>                processEvents();<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">finally</span><br>        &#123;<br>            notifyShutdown();<br>            running.set(IDLE);<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>    &#123;<br>        <span class="hljs-comment">// This is a little bit of guess work.  The running state could of changed to HALTED by</span><br>        <span class="hljs-comment">// this point.  However, Java does not have compareAndExchange which is the only way</span><br>        <span class="hljs-comment">// to get it exactly correct.</span><br>        <span class="hljs-keyword">if</span> (running.get() == RUNNING)<br>        &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">&quot;Thread is already running&quot;</span>);<br>        &#125;<br>        <span class="hljs-keyword">else</span><br>        &#123;<br>            earlyExit();<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+
+<p>核心代码：com.lmax.disruptor.BatchEventProcessor#processEvents</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">processEvents</span><span class="hljs-params">()</span></span><br><span class="hljs-function">   </span>&#123;<br>       T event = <span class="hljs-keyword">null</span>;<br>       <span class="hljs-keyword">long</span> nextSequence = sequence.get() + <span class="hljs-number">1L</span>;<br><br>       <span class="hljs-keyword">while</span> (<span class="hljs-keyword">true</span>)<br>       &#123;<br>           <span class="hljs-keyword">try</span><br>           &#123;<br>              <span class="hljs-comment">//获取可用的序列，不同的等待策略有不同的效果</span><br>               <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> availableSequence = sequenceBarrier.waitFor(nextSequence);<br>               <span class="hljs-keyword">if</span> (batchStartAware != <span class="hljs-keyword">null</span>)<br>               &#123;<br>                   batchStartAware.onBatchStart(availableSequence - nextSequence + <span class="hljs-number">1</span>);<br>               &#125;<br>               <span class="hljs-comment">//事件消费，直到ringbuffer队列为null</span><br>               <span class="hljs-keyword">while</span> (nextSequence &lt;= availableSequence)<br>               &#123;<br>                   event = dataProvider.get(nextSequence);<br>                 <span class="hljs-comment">//用户实现消费的入口</span><br>                   eventHandler.onEvent(event, nextSequence, nextSequence == availableSequence);<br>                   nextSequence++;<br>               &#125;<br><br>               sequence.set(availableSequence);<br>           &#125;<br>           <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">final</span> TimeoutException e)<br>           &#123;<br>               notifyTimeout(sequence.get());<br>           &#125;<br>           <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">final</span> AlertException ex)<br>           &#123;<br>               <span class="hljs-keyword">if</span> (running.get() != RUNNING)<br>               &#123;<br>                   <span class="hljs-keyword">break</span>;<br>               &#125;<br>           &#125;<br>           <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">final</span> Throwable ex)<br>           &#123;<br>               exceptionHandler.handleEventException(ex, nextSequence, event);<br>               sequence.set(nextSequence);<br>               nextSequence++;<br>           &#125;<br>       &#125;<br>   &#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>到这里对于Disruptor的生产流程，与消费流程就分析完了。有没有醍醐灌顶的感觉。。。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ul>
+<li>Log4j2</li>
+</ul>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>笔者相关实践代码已经上传github  <a target="_blank" rel="noopener" href="https://github.com/fengmingli/awesome-java/tree/main/middleware/jctools">repo</a></p>
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://lmax-exchange.github.io/disruptor/disruptor.html">官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/LMAX-Exchange/disruptor/wiki/Performance-Results">官网wiki</a></li>
+<li><a target="_blank" rel="noopener" href="http://ifeve.com/dissecting-disruptor-whats-so-special/">并发编程网</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.iteye.com/blog/brokendreams-2255720">disruptor-3.3.2源码解析汇总</a></li>
+<li><a target="_blank" rel="noopener" href="https://tech.meituan.com/2016/11/18/disruptor.html">美团技术团队</a></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">并发编程</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Queue/">Queue</a>
+                    
+                  </div>
+                
+              </div>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/09/20/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97JCTools/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【并发编程｜五】神奇的高性能无锁队列JCTools</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/21/java/concurrent/%E5%9B%9E%E9%A1%BEJDK%E5%8E%9F%E7%94%9F%E5%B9%B6%E5%8F%91%E9%98%9F%E5%88%97/">
+                        <span class="hidden-mobile">【并发编程｜三】漫谈JDK原生并发队列</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/gitalk@1.7.0/dist/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"87b556302f561752d980","clientSecret":"8a7ba66af0d306771ccbe57237bb5c10a7ee3292","repo":"issue","owner":"fengmingli","admin":["lifengming"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'a36fb0d2524f02d92b8e140a4e15f8d4'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>LiFengMing</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

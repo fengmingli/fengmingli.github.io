@@ -1,0 +1,753 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <link rel="icon" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="FengMing Li">
+  <meta name="keywords" content="技术,生活">
+  
+  <title>如何实现高性能RPC框架 - FengMing Li</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"lifengming.cn","root":"/","version":"1.8.11","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>FengMing Li</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/java/">
+                <i class="iconfont icon-archive-fill"></i>
+                JAVA系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/cncf/">
+                <i class="iconfont icon-archive-fill"></i>
+                CNCF系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/middleware/">
+                <i class="iconfont icon-archive-fill"></i>
+                中间件系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/why">
+                <i class="iconfont icon-archive-fill"></i>
+                为什么
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/link/">
+                <i class="iconfont icon-link-fill"></i>
+                友情链接
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                更多
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/doc/live/">
+                    <i class="iconfont icon-music"></i>
+                    生活
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/tags/">
+                    <i class="iconfont icon-tags-fill"></i>
+                    标签
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/archives/">
+                    <i class="iconfont icon-archive-fill"></i>
+                    归档
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/">
+                    <i class="iconfont icon-category-fill"></i>
+                    分类
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="如何实现高性能RPC框架">
+              
+                如何实现高性能RPC框架
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-06-20 00:00" pubdate>
+        2020年6月20日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.6k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      31
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">如何实现高性能RPC框架</h1>
+            
+            <div class="markdown-body">
+              <h2 id="什么是RPC"><a href="#什么是RPC" class="headerlink" title="什么是RPC"></a>什么是RPC</h2><p>远程调用过程</p>
+<h2 id="RPC-的主要流程"><a href="#RPC-的主要流程" class="headerlink" title="RPC 的主要流程"></a>RPC 的主要流程</h2><ol>
+<li>客户端 获取到 UserService 接口的 Refer: userServiceRefer</li>
+<li>客户端 调用 userServiceRefer.verifyUser(email, pwd)</li>
+<li>客户端 获取到 请求方法 和 请求数据</li>
+<li>客户端 把 请求方法 和 请求数据 序列化为 传输数据</li>
+<li>进行网络传输</li>
+<li>服务端 获取到 传输数据</li>
+<li>服务端 反序列化获取到 请求方法 和 请求数据</li>
+<li>服务端 获取到 UserService 的 Invoker: userServiceInvoker</li>
+<li>服务端 userServiceInvoker 调用 userServiceImpl.verifyUser(email, pwd) 获取到 响应结果</li>
+<li>服务端 把 响应结果 序列化为 传输数据</li>
+<li>进行网络传输</li>
+<li>客户端 接收到 传输数据</li>
+<li>客户端 反序列化获取到 响应结果</li>
+<li>客户端 userServiceRefer.verifyUser(email, pwd) 返回 响应结果</li>
+</ol>
+<p>整个流程中对性能影响比较大的环节有：序列化[4, 7, 10, 13]，方法调用[2, 3, 8, 9, 14]，网络传输[5, 6, 11, 12]。</p>
+<h2 id="RPC流程图"><a href="#RPC流程图" class="headerlink" title="RPC流程图"></a>RPC流程图</h2><h2 id="序列化方案"><a href="#序列化方案" class="headerlink" title="序列化方案"></a>序列化方案</h2><p>Java 世界最常用的几款高性能序列化方案有 <a target="_blank" rel="noopener" href="https://github.com/EsotericSoftware/kryo">Kryo</a> <a target="_blank" rel="noopener" href="https://github.com/protostuff/protostuff">Protostuff</a> <a target="_blank" rel="noopener" href="https://github.com/RuedigerMoeller/fast-serialization">FST</a> <a target="_blank" rel="noopener" href="https://github.com/FasterXML/jackson">Jackson</a> <a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">Fastjson</a>。只需要进行一次 Benchmark，然后从这5种序列化方案中选出性能最高的那个就行了。</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ngs-doo/dsl-json">DSL-JSON</a> 使用起来过于繁琐，不在考虑之列。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/pascaldekloe/colfer">Colfer</a> <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/">Protocol</a> <a target="_blank" rel="noopener" href="https://thrift.apache.org/">Thrift</a> 因为必须预先定义描述文件，使用起来太麻烦，所以不在考虑之列。</p>
+</li>
+<li><p>至于 Java 自带的序列化方案，早就因为性能问题被大家所抛弃，所以也不考虑。下面的表格列出了在考虑之列的5种序列化方案的性能。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/hank-whu/rpc-benchmark/blob/master/benchmark-base/src/main/java/benchmark/bean/User.java">User</a> 序列化+反序列化 性能</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>framework</th>
+<th>thrpt (ops/ms)</th>
+<th>size</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>protostuff</td>
+<td>1654</td>
+<td>240</td>
+</tr>
+<tr>
+<td>kryo</td>
+<td>1288</td>
+<td>296</td>
+</tr>
+<tr>
+<td>fst</td>
+<td>1101</td>
+<td>263</td>
+</tr>
+<tr>
+<td>jackson</td>
+<td>959</td>
+<td>385</td>
+</tr>
+<tr>
+<td>fastjson</td>
+<td>603</td>
+<td>378</td>
+</tr>
+</tbody></table>
+<ul>
+<li>包含15个 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/rpc-benchmark/blob/master/benchmark-base/src/main/java/benchmark/bean/User.java">User</a> 的 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/rpc-benchmark/blob/master/benchmark-base/src/main/java/benchmark/bean/Page.java">Page</a> 序列化+反序列化 性能</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>framework</th>
+<th>thrpt (ops/ms)</th>
+<th>size</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>kryo</td>
+<td>143</td>
+<td>2080</td>
+</tr>
+<tr>
+<td>fst</td>
+<td>118</td>
+<td>3495</td>
+</tr>
+<tr>
+<td>protostuff</td>
+<td>98</td>
+<td>3920</td>
+</tr>
+<tr>
+<td>jackson</td>
+<td>71</td>
+<td>5711</td>
+</tr>
+<tr>
+<td>fastjson</td>
+<td>40</td>
+<td>5606</td>
+</tr>
+</tbody></table>
+<p>从这个 benchmark 中可以得出明确的结论：二进制协议的 protostuff kryo fst 要比文本协议的 jackson fastjson 有明显优势；文本协议中，jackson(开启了afterburner) 要比 fastjson 有明显的优势。</p>
+<p>无法确定的是：3个二进制协议到底哪个更好一些，毕竟 速度 和 size 对于 RPC 都很重要。直观上 kryo 或许是最佳选择，而且 kryo 也广受各大型系统的青睐。不过最终还是决定把这3个类库都留作备选，通过集成传输模块后的 Benchmark 来决定选用哪个。</p>
+<table>
+<thead>
+<tr>
+<th>framework</th>
+<th>exist op/ms</th>
+<th>create op/ms</th>
+<th>get op/ms</th>
+<th>list op/ms</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>proto</td>
+<td>103.92</td>
+<td>89.50</td>
+<td>83.33</td>
+<td>21.17</td>
+</tr>
+<tr>
+<td>kryo</td>
+<td>99.23</td>
+<td>76.71</td>
+<td>73.89</td>
+<td>25.68</td>
+</tr>
+<tr>
+<td>fst</td>
+<td>102.33</td>
+<td>76.24</td>
+<td>78.81</td>
+<td>23.30</td>
+</tr>
+</tbody></table>
+<p>最终的结果也还是各有千秋难以抉择，所以 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc">Turbo</a> 保留了 protostuff 和 kryo 的实现，并允许用户自行替换为自己的实现。</p>
+<h2 id="方法调用"><a href="#方法调用" class="headerlink" title="方法调用"></a>方法调用</h2><p>可用的 动态方法调用 方案有：Reflection ClassGeneration MethodHandle。Reflection 是最古老的技术，据说性能不佳。ClassGeneration 动态类生成，从原理上说应该是跟直接调用一样的性能。MethodHandle 是从 Java 7 开始出现的技术，据说能达到跟直接调用一样的性能。实际结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>thrpt (ops/us)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>direct</td>
+<td>1062</td>
+</tr>
+<tr>
+<td>javassist</td>
+<td>920</td>
+</tr>
+<tr>
+<td>methodHandle</td>
+<td>430</td>
+</tr>
+<tr>
+<td>reflection</td>
+<td>337</td>
+</tr>
+</tbody></table>
+<p>结论非常明显：使用类生成技术的 <a target="_blank" rel="noopener" href="http://jboss-javassist.github.io/javassist/">javassist</a> 跟直接调用几乎一样的性能，就用 <a target="_blank" rel="noopener" href="http://jboss-javassist.github.io/javassist/">javassist</a> 了。</p>
+<p>MethodHandle 表现并没有宣传的那么好，怎么回事？原来 MethodHandle 只有在明确知道调用 参数数量 参数类型 的情况下才能调用高性能的 invokeExact(Object… args)，所以它并不适合作为动态调用的方案。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs pgsql"><span class="hljs-keyword">As</span> <span class="hljs-keyword">is</span> usual <span class="hljs-keyword">with</span> virtual methods, source-<span class="hljs-keyword">level</span> calls <span class="hljs-keyword">to</span> invokeExact <span class="hljs-keyword">and</span> invoke compile <span class="hljs-keyword">to</span> an invokevirtual instruction. More unusually, the compiler must <span class="hljs-type">record</span> the actual argument <span class="hljs-keyword">types</span>, <span class="hljs-keyword">and</span> may <span class="hljs-keyword">not</span> <span class="hljs-keyword">perform</span> <span class="hljs-keyword">method</span> invocation conversions <span class="hljs-keyword">on</span> the arguments. <span class="hljs-keyword">Instead</span>, it must push them <span class="hljs-keyword">on</span> the stack according <span class="hljs-keyword">to</span> their own unconverted <span class="hljs-keyword">types</span>. The <span class="hljs-keyword">method</span> handle <span class="hljs-keyword">object</span> itself <span class="hljs-keyword">is</span> pushed <span class="hljs-keyword">on</span> the stack <span class="hljs-keyword">before</span> the arguments. The compiler <span class="hljs-keyword">then</span> calls the <span class="hljs-keyword">method</span> handle <span class="hljs-keyword">with</span> a symbolic <span class="hljs-keyword">type</span> descriptor which describes the argument <span class="hljs-keyword">and</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">types</span>.<br>refer: https://docs.oracle.com/javase/<span class="hljs-number">7</span>/docs/api/java/lang/invoke/MethodHandle.html<br></code></pre></div></td></tr></table></figure>
+
+<h2 id="网络传输"><a href="#网络传输" class="headerlink" title="网络传输"></a>网络传输</h2><p><a target="_blank" rel="noopener" href="https://github.com/netty/netty">Netty</a> 已经成为事实上的标准，所有主流的项目现在使用的都是 <a target="_blank" rel="noopener" href="https://github.com/netty/netty">Netty</a>。<a target="_blank" rel="noopener" href="http://mina.apache.org/">Mina</a> <a target="_blank" rel="noopener" href="https://github.com/javaee/grizzly">Grizzly</a> 已经失去市场，所以也就不用考虑了。还好也不至于这么无聊，<a target="_blank" rel="noopener" href="https://github.com/real-logic/aeron">Aeron</a> 的闪亮登场让 Netty 多了一个有力的竞争对手。Aeron 是一个可靠高效的 UDP 单播 UDP 多播和 IPC 消息传递工具。性能是消息传递中的关键。Aeron 的设计旨在达到 高吞吐量 低开销 和 低延迟。实际效果到底如何呢？很遗憾，在 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/18c95649b1a4">RPC Benchmark Round 1</a> 中的表现一般。跟他们开发团队沟通后，最终确认其<a target="_blank" rel="noopener" href="https://github.com/real-logic/aeron/issues/432">无法对超过 64k 的消息进行 zero-copy 处理</a>，我觉得这可能是 Aeron 表现不佳的一个原因。Aeron 或许更适合 微小消息 极端低延迟 的场景，而不适用于更加通用的 RPC 场景。所以暂时还没有出现能够跟 Netty 一争高下的通用网络传输框架，现阶段 Netty 依然是 RPC 系统的最佳选择。</p>
+<h2 id="消息格式"><a href="#消息格式" class="headerlink" title="消息格式"></a>消息格式</h2><p>我们先来看一下 Dubbo 的消息格式</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-symbol">RpcInvocation</span> <span class="hljs-symbol">implements</span> <span class="hljs-symbol">Invocation, <span class="hljs-symbol">Serializable</span></span> &#123;<br>    <span class="hljs-keyword">private</span> String methodName;<br>    <span class="hljs-keyword">private</span> Class&lt;?&gt;[] parameterTypes;<br>    <span class="hljs-keyword">private</span> Object[] arguments;<br>    ...<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>可以说是非常经典的设计，Client 必须告知 Server 要调用的 方法名称 参数类型 参数。Server 获取到这3个参数后，通过 方法名称 com.alibaba.service.auth.UserService.verifyUser 和 参数类型 (String, String) 获取到 Invoker，然后通过 Invoker 实际调用 userServiceImpl 的 verifyUser(String, String) 方法。其他的众多 RPC 框架也都采取了这一经典设计。</p>
+<p>但是，这是正确的做法吗？当然不是，这种做法非常浪费空间，每次请求消息体的大概内存布局应该是下面的样子：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">verifyUser</span><span class="hljs-params">(<span class="hljs-keyword">String</span> email, <span class="hljs-keyword">String</span> pwd)</span></span>;<br><br>|com.alibaba.service.auth.UserService.verifyUser|java.lang.<span class="hljs-keyword">String</span>,java.lang.<span class="hljs-keyword">String</span>|实际的参数|<br></code></pre></div></td></tr></table></figure>
+
+<p>啰里啰嗦的，浪费了 80 byte 来定义 方法 和 参数，并没有比 http+json 的方式高效多少。实际的 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/18c95649b1a4">性能测试</a> 也证明了这一点，undertow+jackson 要比 dubbo motan 的成绩都要好。</p>
+<p>那什么才是正确的做法？<a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc">Turbo</a> 在消息格式上做出了非常大的改变。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-symbol">Request</span> <span class="hljs-symbol">implements</span> <span class="hljs-symbol">Serializable</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> requestId;<br>    <span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> serviceId;<br>    <span class="hljs-keyword">private</span> MethodParam methodParam;<br>    ...<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>大致的内存布局：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">verifyUser</span><span class="hljs-params">(<span class="hljs-keyword">String</span> email, <span class="hljs-keyword">String</span> pwd)</span></span>;<br>|<span class="hljs-keyword">int</span>|<span class="hljs-keyword">int</span>|实际的参数|<br></code></pre></div></td></tr></table></figure>
+
+<p>高效多了，只用了 4 byte 就做到了 方法 和 参数 的定义。大大减小了 传输数据 的 size，同时 int 类型的 serviceId 也降低了 Invoker 的查找开销。</p>
+<p>看到这里，有同学可能会问：那岂不是要为每个方法定义一个唯一 id ？ 答案是不需要的，<a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc">Turbo</a> 解决了这一问题，详情参考 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc/blob/master/turbo-rpc/src/main/java/rpc/turbo/common/TurboConnectService.java">TurboConnectService</a> 。</p>
+<h2 id="MethodParam-简介"><a href="#MethodParam-简介" class="headerlink" title="MethodParam 简介"></a>MethodParam 简介</h2><p><a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc/blob/master/turbo-rpc/src/main/java/rpc/turbo/param/MethodParamClassFactory.java">MethodParam</a> 才是 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc">Turbo</a> 性能炸裂的真正原因。其基本原理是利用 ClassGeneration 对每个 Method 都生成一个 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc/blob/master/turbo-rpc/src/main/java/rpc/turbo/param/MethodParamClassFactory.java">MethodParam</a> 类，用于对方法参数的封装。这样做的好处有：</p>
+<ol>
+<li>减少基本数据类型的 装箱 拆箱 开销</li>
+<li>序列化时可以省略掉很多类型描述，大大减小 传输消息 的 size</li>
+<li>使 Invoker 可以高效调用 被代理类 的方法</li>
+<li>统一 RPC 和 REST 的数据模型，简化 序列化 反序列化 实现</li>
+<li>大大加快 json 格式数据 反序列化 速度</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-comment">//方法 test(long id, int value) 将会生成下面的 MethodParam 类:     </span><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestService_test_2_MethodParam</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">MethodParam</span> </span>&#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">long</span> id;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> value;<br>     <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">long</span> $param0() &#123; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.id; &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> $param1() &#123; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.value; &#125;<br><br>    <span class="hljs-comment">//... getters and setters</span><br>     <br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">TestService_test_2_MethodParam</span><span class="hljs-params">(<span class="hljs-keyword">long</span> id, <span class="hljs-keyword">int</span> value)</span> </span>&#123;<br>        <span class="hljs-keyword">this</span>.id = id;<br>        <span class="hljs-keyword">this</span>.value= value;<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h2 id="序列化的进一步优化"><a href="#序列化的进一步优化" class="headerlink" title="序列化的进一步优化"></a>序列化的进一步优化</h2><p>大部分 RPC 框架的 序列化 反序列化 过程都需要一个中间的 bytes</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs mipsasm">序列化过程：User &gt; <span class="hljs-keyword">bytes </span>&gt; <span class="hljs-keyword">ByteBuf</span><br><span class="hljs-keyword"></span>反序列化过程：<span class="hljs-keyword">ByteBuf </span>&gt; <span class="hljs-keyword">bytes </span>&gt; User<br></code></pre></div></td></tr></table></figure>
+
+<p>而 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc">Turbo</a> 砍掉了中间的 bytes，直接操作 ByteBuf，实现了 序列化 反序列化 的 zero-copy，大大减少了 内存分配 内存复制 的开销。具体实现请参考 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc/blob/master/turbo-protostuff/src/main/java/rpc/turbo/serialization/protostuff/ProtostuffSerializer.java">ProtostuffSerializer</a> 和 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc/tree/master/turbo-rpc/src/main/java/rpc/turbo/transport/server/rpc/codec">Codec</a>。</p>
+<p>对于已知类型和已知字段，<a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc">Turbo</a> 都尽量采用 手工序列化 手工反序列化 的方式来处理，以进一步减少性能开销。</p>
+<h2 id="ObjectPool"><a href="#ObjectPool" class="headerlink" title="ObjectPool"></a>ObjectPool</h2><p>常见的几个 ObjectPool 实现性能都很差，反而很容易成为性能瓶颈。Stormpot 性能强悍，不过存在偶尔死锁的问题，而且作者也停止维护了。HikariCP 性能不错，不过其本身是一款数据库连接池，用作 ObjectPool 并不称手。我的建议是尽量避免使用 ObjectPool，转而使用替代技术。更重要的是 Netty 的 Channel 是线程安全的，并不需要使用 ObjectPool 来管理。只需要一个简单的容器来存储 Channel，用的时候使用 负载均衡策略 选出一个 Channel 出来就行了。</p>
+<p>|framework| thrpt (ops/us)| |–|–| |ThreadLocal| 685.418| |Stormpot| 272.934| |HikariCP| 139.126| |SegmentLock| 19.415| |Vibur| 4.668| |CommonsPool2| 1.107| |CommonsPool| 0.276|</p>
+<h2 id="基础类库优化"><a href="#基础类库优化" class="headerlink" title="基础类库优化"></a>基础类库优化</h2><p>除了上述的关键流程优化，<a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc">Turbo</a> 还做了大量基础类库的优化</p>
+<ul>
+<li>AtomicMuiltInteger 多个 int 的原子性操作</li>
+<li>ConcurrentArrayList 无锁并发 List 实现，比 CopyOnWriteArrayList 的写入开销低，O(1) vs O(n)</li>
+<li>ConcurrentIntToObjectArrayMap 以 int 数组为底层实现的无锁并发 Map，读多写少情况下接近直接访问字段的性能，读多写多情况下是 ConcurrentHashMap 性能的 5x</li>
+<li>ConcurrentIntegerSequencer 快速序号生成器，并发环境下是 AtomicInteger 性能的10x</li>
+<li>ObjectId 全局唯一 id 生成器，是 Java 自带 UUID 性能的 200x</li>
+<li>HexUtils 查表 + 批量操作，是 Netty 和 Guava 实现的 2x~5x</li>
+<li>URLEncodeUtils 基于 HexUtils 实现，是 Java 和 Commons 实现的 2x，Guava 实现的 1.1x (Guava 只有 urlEncode 实现，无 urlDecode 实现)</li>
+<li>ByteBufUtils 实现了高效的 ZigZag 写入操作，最高可达通常实现的 4x</li>
+</ul>
+<p>上面的内容仅介绍了作者认为重要的东西，更多内容请直接查看 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc/">Turbo 源码</a></p>
+<h2 id="不足之处"><a href="#不足之处" class="headerlink" title="不足之处"></a>不足之处</h2><ul>
+<li>有很多优化是毫无价值的，Donald Knuth 大神说得很对</li>
+<li>强制必须使用 CompletableFuture 作为返回值导致了一些性能开销</li>
+<li>滥用 ClassGeneration，而且并没有考虑类的卸载，这方面需要改进</li>
+<li>实现了 <a target="_blank" rel="noopener" href="https://github.com/hank-whu/turbo-rpc/blob/master/turbo-utils/src/main/java/rpc/turbo/util/UnsafeStringUtils.java">UnsafeStringUtils</a>，这是个危险的黑魔法实现，需要重新思考下</li>
+<li>对性能的追求有点走火入魔，导致了很多地方的设计过于复杂</li>
+</ul>
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><h2 id="Github-repo"><a href="#Github-repo" class="headerlink" title="Github repo"></a><a target="_blank" rel="noopener" href="https://github.com/fengmingli/lfm-rpc">Github repo</a></h2>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Netty/">Netty</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/RPC/">RPC</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Netty/">Netty</a>
+                    
+                  </div>
+                
+              </div>
+              
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/gitalk@1.7.0/dist/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"87b556302f561752d980","clientSecret":"8a7ba66af0d306771ccbe57237bb5c10a7ee3292","repo":"issue","owner":"fengmingli","admin":["lifengming"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '80f5c117c9bd02fa1b6672a48d0d66f8'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>LiFengMing</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

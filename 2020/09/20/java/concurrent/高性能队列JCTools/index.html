@@ -1,0 +1,694 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <link rel="icon" href="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/private/lfm_title.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="FengMing Li">
+  <meta name="keywords" content="技术,生活">
+  
+  <title>【并发编程｜五】神奇的高性能无锁队列JCTools - FengMing Li</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"lifengming.cn","root":"/","version":"1.8.11","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>FengMing Li</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/java/">
+                <i class="iconfont icon-archive-fill"></i>
+                JAVA系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/cncf/">
+                <i class="iconfont icon-archive-fill"></i>
+                CNCF系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/middleware/">
+                <i class="iconfont icon-archive-fill"></i>
+                中间件系列
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/doc/why">
+                <i class="iconfont icon-archive-fill"></i>
+                为什么
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/link/">
+                <i class="iconfont icon-link-fill"></i>
+                友情链接
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                更多
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/doc/live/">
+                    <i class="iconfont icon-music"></i>
+                    生活
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/tags/">
+                    <i class="iconfont icon-tags-fill"></i>
+                    标签
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/archives/">
+                    <i class="iconfont icon-archive-fill"></i>
+                    归档
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/">
+                    <i class="iconfont icon-category-fill"></i>
+                    分类
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="【并发编程｜五】神奇的高性能无锁队列JCTools">
+              
+                【并发编程｜五】神奇的高性能无锁队列JCTools
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-09-20 00:00" pubdate>
+        2020年9月20日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      38
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">【并发编程｜五】神奇的高性能无锁队列JCTools</h1>
+            
+            <div class="markdown-body">
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近在看Netty源码的时候，关注到了JCTools。JCTools是什么？是一个高性能的无锁并发工具包。早在96年就有论文提出了无锁队列的概念，再到后来 Disruptor，高性能已得到生产的验证。此处介绍的 Jctools 中的高性能队列，其性能丝毫不输于 Disruptor。那Disruptor与JCTools都是高性能队列的处理有什么区别了？</p>
+<h2 id="什么是JCTools"><a href="#什么是JCTools" class="headerlink" title="什么是JCTools"></a>什么是JCTools</h2><p>JCTools (Java Concurrency Tools) 提供了一系列非阻塞并发数据结构（标准 Java 中缺失的），当存在线程争抢的时候，非阻塞并发数据结构比阻塞并发数据结构能提供更好的性能。</p>
+<p>CTools 是适用于 JVM 并发开发的工具，主要提供了一些 JDK 确实的并发数据结构，例如非阻塞 Map、非阻塞 Queue 等。其中非阻塞队列可以分为四种类型，可以根据不同的场景选择使用。</p>
+<p>JCTools 是一个开源工具包，在 Apache License 2.0 下发布，并在 Netty、Rxjava 等诸多框架中被广泛使用。</p>
+<h3 id="非阻塞-Map"><a href="#非阻塞-Map" class="headerlink" title="非阻塞 Map"></a>非阻塞 Map</h3><ul>
+<li>ConcurrentAutoTable<ul>
+<li>后面几个map/set结构的基础</li>
+</ul>
+</li>
+<li>NonBlockingHashMap :<ul>
+<li>是对 ConcurrentHashMap 的增强，对多 CPU 的支持以及高并发更新提供更好的性能。</li>
+</ul>
+</li>
+<li>NonBlockingHashMapLong <ul>
+<li>是 key 为 Long 型的 NonBlockingHashMap。</li>
+</ul>
+</li>
+<li>NonBlockingHashSet<ul>
+<li>是对 NonBlockingHashMap 的简单包装以支持 set 的接口。</li>
+</ul>
+</li>
+<li>NonBlockingIdentityHashMap <ul>
+<li>是从 NonBlockingHashMap 改造来的，使用 System.identityHashCode() 来计算哈希。</li>
+</ul>
+</li>
+<li>NonBlockingSetInt <ul>
+<li>是一个使用 CAS 的简单的 bit-vector。</li>
+</ul>
+</li>
+</ul>
+<h3 id="非阻塞-Queue"><a href="#非阻塞-Queue" class="headerlink" title="非阻塞 Queue"></a>非阻塞 Queue</h3><p>JCTools 提供的非阻塞队列分为 四种类型，可以根据不同的应用场景选择使用：</p>
+<ul>
+<li>Spsc：单生产者单消费者（有界和无界）</li>
+<li>Mpsc：多生产者单消费者（有界和无界）</li>
+<li>Spmc：单生产者多消费者（有界）</li>
+<li>Mpmc：多生产者多消费者（有界）</li>
+</ul>
+<p>“生产者”和“消费者”是指“生产线程”和“消费线程”。</p>
+<h3 id="基于实现数据结构分类"><a href="#基于实现数据结构分类" class="headerlink" title="基于实现数据结构分类"></a>基于实现数据结构分类</h3><ul>
+<li>基于数组的队列：<ul>
+<li> MpscArrayQueue</li>
+<li>MpmcArrayQueue</li>
+<li>SpscArrayQueue</li>
+<li>SpmcArrayQueue</li>
+</ul>
+</li>
+<li>基于链表的队列： <ul>
+<li>MpscLinkedQueue</li>
+<li>SpscLinkedQueue</li>
+</ul>
+</li>
+<li>基于<strong>LinkedArray</strong>的队列<ul>
+<li>SpscChunkedArrayQueue</li>
+<li>SpscGrowableArrayQueue</li>
+<li>SpscUnboundedArrayQueue</li>
+<li>MpscGrowableArrayQueue</li>
+<li>MpscChunkedArrayQueue</li>
+<li><strong>MpscUnboundedArrayQueue（Netty中使用）</strong></li>
+</ul>
+</li>
+<li>XaddQueue：<ul>
+<li>MpscUnboundedXaddArrayQueue</li>
+<li>MpmcUnboundedXaddArrayQueue</li>
+</ul>
+</li>
+<li>其它类型队列：<ul>
+<li>MpscCompoundQueue</li>
+</ul>
+</li>
+</ul>
+<h3 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h3><p>首先我们先从简单的 MpscArrayQueue 队列的源码开始分析：</p>
+<img src="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/image/MpscArrayQueue.png" srcset="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif" lazyload  width = "100%" height = "550"/>
+
+
+
+<h4 id="入队offer"><a href="#入队offer" class="headerlink" title="入队offer()"></a>入队offer()</h4><p>跟进源码之前，首先回顾下 MpscArrayQueue 的重要属性</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-comment">// ConcurrentCircularArrayQueue</span><br>   <span class="hljs-comment">/**</span><br><span class="hljs-comment">    * Q：这个值有什么作用？</span><br><span class="hljs-comment">    * A：数组长度对应的掩码 - 方便用&amp;运算代替较慢的%运算 子类需要继续缓存行填充，以避免mask 和 buffer 产生伪共享</span><br><span class="hljs-comment">    * eg.        capacity=16     0000 0000 0001 0000</span><br><span class="hljs-comment">    *      mask: capacity-1=15   0000 0000 0000 1111</span><br><span class="hljs-comment">    *  h &amp; (length-1) = h % length</span><br><span class="hljs-comment">    */</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> mask; <br><br><span class="hljs-comment">// 真正存放队列数据的数组</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> E[] buffer; <br><br><br><span class="hljs-comment">// MpmcArrayQueueProducerIndexField</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-keyword">long</span> producerIndex; <span class="hljs-comment">// 生产者的索引</span><br><br><span class="hljs-comment">// MpscArrayQueueProducerLimitField</span><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 在重新读取消费者索引之前，第一个不可用的生产者索引。</span><br><span class="hljs-comment">     * &lt;p&gt;</span><br><span class="hljs-comment">     * Q: 这个值有什么用，直接读取consumerIndex计算不行吗?</span><br><span class="hljs-comment">     * A: &#123;<span class="hljs-doctag">@code</span> consumerIndex&#125;是一个变化较为频繁的值，因此它所在的缓存行极易失效，从而影响读性能。</span><br><span class="hljs-comment">     * 我们拷贝一个副本（并在副本无效的时候更新），这样可以减少生产者与消费者之间产生的伪共享，从而提高读效率.</span><br><span class="hljs-comment">     * &lt;p&gt;</span><br><span class="hljs-comment">     * Q: 该值为什么进行缓存行填充，为什么与producerIndex分离？</span><br><span class="hljs-comment">     * A: 因为是多生产模式，因此producerIndex上将产生高度竞争，因此其所在的缓存行极易失效，</span><br><span class="hljs-comment">     * 将该值与producerIndex分开，我们期望该值大部分时间位于用于共享（且很少失效）的缓存行中。</span><br><span class="hljs-comment">     * PS: 该值的更新频率远低于producerIndex。</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-keyword">long</span> producerLimit; <br><br><span class="hljs-comment">// MpscArrayQueueConsumerIndexField</span><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 消费者索引(当前消费进度).</span><br><span class="hljs-comment">     * 这是一个滞后值，消费者先消费可用槽位数据，再更新消费进度;</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">long</span> consumerIndex; <br></code></pre></div></td></tr></table></figure>
+
+
+
+<p>跟进 offer() 方法的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">offer</span><span class="hljs-params">(<span class="hljs-keyword">final</span> E e)</span></span><br><span class="hljs-function">   </span>&#123;<br>       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">null</span> == e)<br>       &#123;<br>           <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> NullPointerException();<br>       &#125;<br><br>      <span class="hljs-comment">//producerLimit基于consumerIndex计算的一个缓存值，用户减少对consumerIndex的读取（减少缓存行miss），在循环中可能更新</span><br>       <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> mask = <span class="hljs-keyword">this</span>.mask;<br>       <span class="hljs-keyword">long</span> producerLimit = lvProducerLimit();<br>       <span class="hljs-keyword">long</span> pIndex;<br>       <span class="hljs-keyword">do</span><br>       &#123;<br>          <span class="hljs-comment">//获取生产者索引</span><br>           pIndex = lvProducerIndex();<br>           <span class="hljs-keyword">if</span> (pIndex &gt;= producerLimit)<br>           &#123;<br>               <span class="hljs-comment">// 生产者索引大于等于缓存的上限，表示根据缓存值认为队列已满。</span><br>               <span class="hljs-comment">// 此时，分两种情况：1. 队列真的满了。 2.缓存过期了。</span><br>               <span class="hljs-comment">// 因此需要读取最新的消费者索引，计算新的上限，判断队列是否是真的满了（以满足Queue对offer的语义要求）</span><br>               <br>               <span class="hljs-comment">// 获取消费者索引</span><br>               <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> cIndex = lvConsumerIndex();<br>               <span class="hljs-comment">//设计的很巧妙，仔细分析下。就是生产速度最大快于消费者一个容量的大小</span><br>               <span class="hljs-comment">//buffer 的大小=mask+1</span><br>               producerLimit = cIndex + mask + <span class="hljs-number">1</span>;<br>               <br>               <span class="hljs-comment">//生产速度是否快于消费速度</span><br>               <span class="hljs-keyword">if</span> (pIndex &gt;= producerLimit)<br>               &#123;<br>                   <span class="hljs-comment">// 最新的消费者索引显式队列确实已满</span><br>                   <span class="hljs-comment">// 只有当producerLimit大于producerIndex时更新才有意义，因此不更新producerLimit。</span><br>                   <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>; <span class="hljs-comment">// FULL :(</span><br>               &#125;<br>               <span class="hljs-keyword">else</span><br>               &#123;<br>                   <span class="hljs-comment">// 更新producerLimit为下一个我们必须重新检查消费者索引的值</span><br>                   <span class="hljs-comment">// 因为是多生产者模式，因此更新缓存会产生竞争。</span><br>                   <span class="hljs-comment">// Q: 为什么竞争是良性的？</span><br>                   <span class="hljs-comment">// A: 因为producerLimit永远不会超过下一次的计算值，而producerLimit小于实际值并不会带来错误。</span><br><br>                   <span class="hljs-comment">// update producer limit to the next index that we must recheck the consumer index</span><br>                   <span class="hljs-comment">// this is racy, but the race is benign</span><br>                   soProducerLimit(producerLimit);<br>               &#125;<br>           &#125;<br>       &#125;<br>       <span class="hljs-keyword">while</span> (!casProducerIndex(pIndex, pIndex + <span class="hljs-number">1</span>));<br>       <span class="hljs-comment">/*</span><br><span class="hljs-comment">        * <span class="hljs-doctag">NOTE:</span> the new producer index value is made visible BEFORE the element in the array. If we relied on</span><br><span class="hljs-comment">        * the index visibility to poll() we would need to handle the case where the element is not visible.</span><br><span class="hljs-comment">        */</span><br>       <span class="hljs-comment">// CAS 竞争成功，可以进行填充</span><br>       <span class="hljs-comment">// 提示：新的生产者索引值先于数组中的元素对其它线程可见。如果依赖于索引的可见性执行poll，我们将需要处理元素可能不可见的情况。</span><br><br>       <span class="hljs-comment">// 前面的CAS已经保证了对象的正确构造（安全发布），这里使用Ordered模式是保证尽快的可见性（volatile是立即的可见性）。</span><br>       <span class="hljs-comment">// 计算生产者索引在数组中下标</span><br>       <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> offset = calcCircularRefElementOffset(pIndex, mask);<br>       <span class="hljs-comment">// 向数组中放入数据</span><br>       soRefElement(buffer, offset, e);<br>       <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>; <br>   &#125;<br></code></pre></div></td></tr></table></figure>
+
+
+
+<p>在初始化状态，producerLimit 与队列的容量是相等的，producerLimit = capacity = 4，而 producerIndex = consumerIndex = 0。接下来 Thread1 和 Thread2 并发向 MpscArrayQueue 中存放数据，如下图所示。</p>
+<p><img src="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/image/Mpsc-2.png" srcset="https://lfm-image-1258982381.cos.ap-shanghai.myqcloud.com/background/loading.gif" lazyload alt="image-20210826200206920"></p>
+<p>两个线程此时拿到的 producerIndex 都是 0，是小于 producerLimit 的。此时两个线程都会尝试使用 CAS 操作更新 producerIndex，其中必然有一个是成功的，另外一个是失败的。</p>
+<ol>
+<li>假设 Thread-1 执行 CAS 操作成功，那么 Thread-2 失败后就会重新更新 producerIndex。</li>
+<li>Thread-1 更新后 producerIndex 的值为 1，由于 producerIndex 是 volatile 修饰的，更新后立刻对 Thread-2 可见。</li>
+<li>这里有一点需要注意的是，当前线程更新后的值是被其他线程使用，当 Thread-1 和 Thread-2 都通过 CAS 抢占成功后，它们拿到的 pIndex 分别是 0 和 1。接下来就是根据 pIndex 进行位运算计算得到数组对应的下标，然后通过 UNSAFE.putOrderedObject() 方法将数据写入到数组中，源码如下所示。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;E&gt; <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">soRefElement</span><span class="hljs-params">(E[] buffer, <span class="hljs-keyword">long</span> offset, E e)</span></span>&#123;<br>    UNSAFE.putOrderedObject(buffer, offset, e);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>putOrderedObject() 使用了 StoreStore Barrier，对于 Store1，StoreStore，Store2 这样的操作序列，在 Store2 进行写入之前，会保证 Store1 的写操作对其他处理器可见。保证写入都是最新的。</p>
+<p>跟进源码 calcCircularRefElementOffset()</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java">   <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 计算环形数组的指定（逻辑）索引对应的偏移量 - index为逻辑索引，需要转换为真实索引。</span><br><span class="hljs-comment">     * &lt;p&gt;</span><br><span class="hljs-comment">     * 环形数组(环形缓冲区)的空间是重复利用的，因此逻辑上的index需要转换为真正的index然后再计算。</span><br><span class="hljs-comment">     * 为了高效运算，假定了环形数组的长度都为2的整次幂，因此mask应该为数组长度减1，这样可以使用 &#x27;&amp;&#x27; 快速计算。</span><br><span class="hljs-comment">     * eg. 数组大小为16 index=17 mask=15 index &amp; mask =1 </span><br><span class="hljs-comment">     * REF_ARRAY_BASE 数组中第一个元素的偏移地址， REF_ELEMENT_SHIFT：数组中一个元素占用的大小</span><br><span class="hljs-comment">     * Note: circular arrays are assumed a power of 2 in length and the `mask` is (length - 1).</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> index desirable element index</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> mask (length - 1)</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> the offset in bytes within the circular array for a given index</span><br><span class="hljs-comment">     */</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">long</span> <span class="hljs-title">calcCircularRefElementOffset</span><span class="hljs-params">(<span class="hljs-keyword">long</span> index, <span class="hljs-keyword">long</span> mask)</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">return</span> REF_ARRAY_BASE + ((index &amp; mask) &lt;&lt; REF_ELEMENT_SHIFT);<br>    &#125;<br></code></pre></div></td></tr></table></figure>
+
+
+
+<h4 id="出队Poll"><a href="#出队Poll" class="headerlink" title="出队Poll"></a>出队Poll</h4><p>跟进poll()方法。方法作用移除队列的首个元素并返回，如果队列为空则返回 NULL</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> E <span class="hljs-title">poll</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-comment">// 直接返回消费者索引 consumerIndex</span><br>        <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> cIndex = lpConsumerIndex();<br>        <span class="hljs-comment">// 计算数组对应的偏移量</span><br>        <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> offset = calcCircularRefElementOffset(cIndex, mask);<br><br>        <span class="hljs-comment">// 读取为本地变量，避免在接下来的volatile读之后重新读取</span><br>        <span class="hljs-comment">// Copy field to avoid re-reading after volatile load</span><br>        <span class="hljs-keyword">final</span> E[] buffer = <span class="hljs-keyword">this</span>.buffer;<br><br>        <span class="hljs-comment">// 注意：生产者先更新索引，再填充元素，因此这里必须处理时序问题</span><br>        <span class="hljs-comment">// 如果元素不为null，那么可以安全的消费，因为生产者索引一定可见，但是如果元素为null，那么则必须等待其不为null。</span><br>        <span class="hljs-comment">// Q: 校验element而不是生产者索引，有什么好处？</span><br>        <span class="hljs-comment">// A: 可以减少对生产者索引的读！如果元素可见，那么不必读取生产者索引，可以减少缓存行miss问题。</span><br><br>        <span class="hljs-comment">// If we can&#x27;t see the next available element we can&#x27;t poll</span><br>        E e = lvRefElement(buffer, offset);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">null</span> == e)<br>        &#123;<br>            <span class="hljs-comment">// null == e 有以下可能：</span><br>            <span class="hljs-comment">// 1. 队列为空</span><br>            <span class="hljs-comment">// 2. 生产者已经CAS更新了生产者索引，但是尚未填充元素，或填充的元素尚不可见 - 此时需要等待生产者完成填充，因为队列的状态表示当前并不为空！</span><br><br>            <span class="hljs-comment">// 提示：如果生产者在CAS更新生产者索引之后填充元素之前被中断，在这种情况下，队列并不是真正的为空。其它生产者会在该元素之后继续填充队列。</span><br><br>            <span class="hljs-comment">/*</span><br><span class="hljs-comment">             * <span class="hljs-doctag">NOTE:</span> Queue may not actually be empty in the case of a producer (P1) being interrupted after</span><br><span class="hljs-comment">             * winning the CAS on offer but before storing the element in the queue. Other producers may go on</span><br><span class="hljs-comment">             * to fill up the queue after this element.</span><br><span class="hljs-comment">             */</span><br>            <span class="hljs-keyword">if</span> (cIndex != lvProducerIndex())<br>            &#123;<br>                <span class="hljs-comment">// 队列不为空，需要自旋等待直到元素可见 - 这也是比relaxedPool开销大的原因</span><br>                <span class="hljs-keyword">do</span><br>                &#123;<br>                    e = lvRefElement(buffer, offset);<br>                &#125;<br>                <span class="hljs-keyword">while</span> (e == <span class="hljs-keyword">null</span>);<br>            &#125;<br>            <span class="hljs-keyword">else</span><br>            &#123;<br>                <span class="hljs-comment">// 消费者索引和生产者索引相同，证明队列确实为空</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-comment">// 先消费元素，再更新消费者进度（因为生产者会先校验consumerIndex，因此可确保生产者不会覆盖数据）。</span><br>        <span class="hljs-comment">// 这里可以使用Plain模式赋值为null，因为生产者一定会在索引可见之后才填充元素，consumerIndex的发布可以保证这里也正确发布。</span><br>        spRefElement(buffer, offset, <span class="hljs-keyword">null</span>);<br>        soConsumerIndex(cIndex + <span class="hljs-number">1</span>);<br>        <span class="hljs-keyword">return</span> e;<br>    &#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>因为只有一个消费者线程，所以整个 poll() 的过程没有 CAS 操作。poll() 方法核心思路：</p>
+<ol>
+<li>是获取消费者索引 consumerIndex</li>
+<li>根据 consumerIndex 计算得出数组对应的偏移量</li>
+<li>将数组对应位置的元素取出并返回<ol>
+<li>队列为null，直接返回</li>
+<li>队列不为空，自旋直到获取到元素</li>
+</ol>
+</li>
+<li>将 consumerIndex 移动到环形数组下一个位置。</li>
+</ol>
+<p>获取消费者索引以及计算数组对应的偏移量的逻辑与 offer() 类似，在这里就不赘述了。下面直接看下如何取出数组中 offset 对应的元素，跟进 lvElement() 方法的源码。</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;E&gt; <span class="hljs-function">E <span class="hljs-title">lvRefElement</span><span class="hljs-params">(E[] buffer, <span class="hljs-keyword">long</span> offset)</span></span><br><span class="hljs-function">   </span>&#123;<br>       <span class="hljs-keyword">return</span> (E) UNSAFE.getObjectVolatile(buffer, offset);<br>   &#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>获取数组元素的时候同样使用了 UNSAFE 系列方法，getObjectVolatile() 方法则使用的是 LoadLoad Barrier，对于 Load1，LoadLoad，Load2 操作序列，在 Load2 以及后续读取操作之前，会保证 Load1 的读取操作执行完毕，所以 getObjectVolatile() 方法可以保证每次读取数据都可以从内存中拿到最新值。</p>
+<p>与 offer() 相反，poll() 比较关注队列为空的情况。当调用 lvElement() 方法获取到的元素为 NULL 时，有两种可能的情况：</p>
+<ol>
+<li>如果消费者索引 consumerIndex 等于生产者 producerIndex，说明队列为空。</li>
+<li>只要两者不相等，消费者需要等待生产者填充数据完毕。(在 offer()  中先更新索引，然后填充数据)</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>对 MpscArrayQueue 的知识点做一个简单的总结。</p>
+<ul>
+<li>通过大量填充 long 类型变量解决伪共享问题。</li>
+<li>环形数组的容量设置为 2 的次幂，可以通过位运算快速定位到数组对应下标。</li>
+<li>入队 offer() 操作中 producerLimit 的巧妙设计，大幅度减少了主动获取消费者索引 consumerIndex 的次数，性能提升显著。</li>
+<li>入队和出队操作中都大量使用了 UNSAFE 系列方法，针对生产者和消费者的场景不同，使用的 UNSAFE 方法也是不一样的。</li>
+</ul>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>相关测试实践已经上传github  <a target="_blank" rel="noopener" href="https://github.com/fengmingli/awesome-java/tree/main/middleware/jctools">repo</a></p>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol start="2">
+<li><a target="_blank" rel="noopener" href="https://github.com/JCTools/JCTools/wiki/Getting-Started-With-JCTools">Github wiki</a></li>
+<li><a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/02/14/talk-about-java-magic-class-unsafe.html">Java魔法类：Unsafe应用解析</a></li>
+<li><a target="_blank" rel="noopener" href="http://ifeve.com/memory-barriers-or-fences/">内存屏障</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/JCTools/JCTools.git">Github repo</a></li>
+</ol>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">并发编程</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Queue/">Queue</a>
+                    
+                  </div>
+                
+              </div>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/09/20/java/concurrent/linux%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bkfifo/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【编发编程｜六】Linux内核之kfifo</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/26/java/concurrent/%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97Disruptor/">
+                        <span class="hidden-mobile">【并发编程｜四】神奇的高性能无锁队列Disruptor</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/gitalk@1.7.0/dist/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"87b556302f561752d980","clientSecret":"8a7ba66af0d306771ccbe57237bb5c10a7ee3292","repo":"issue","owner":"fengmingli","admin":["lifengming"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '628b4173b65b8152e334c3efe97ac9e4'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>LiFengMing</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@1.0.0-1/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
