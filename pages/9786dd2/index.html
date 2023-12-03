@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>docker-compose 快速搭建kafka集群 | LiFengMing</title>
+    <meta name="generator" content="VuePress 1.9.5">
+    <link rel="icon" href="/img/lfm_title.png">
+    <meta name="description" content="">
+    <meta name="keywords" content="前端博客,个人技术博客,前端,前端开发,前端框架,web前端,前端面试题,技术文档,学习,面试,JavaScript,js,ES6,TypeScript,vue,python,css3,html5,Node,git,github,markdown">
+    <meta name="baidu-site-verification" content="7F55weZDDc">
+    <meta name="theme-color" content="#11a8cd">
+    
+    <link rel="preload" href="/assets/css/0.styles.74078a8e.css" as="style"><link rel="preload" href="/assets/js/app.89da10ab.js" as="script"><link rel="preload" href="/assets/js/2.8e04b068.js" as="script"><link rel="preload" href="/assets/js/38.2b079d88.js" as="script"><link rel="prefetch" href="/assets/js/10.5e7fe968.js"><link rel="prefetch" href="/assets/js/11.01dd294c.js"><link rel="prefetch" href="/assets/js/12.07fce99c.js"><link rel="prefetch" href="/assets/js/13.4a07fd33.js"><link rel="prefetch" href="/assets/js/14.91957f95.js"><link rel="prefetch" href="/assets/js/15.73a52305.js"><link rel="prefetch" href="/assets/js/16.af7017eb.js"><link rel="prefetch" href="/assets/js/17.e9c76188.js"><link rel="prefetch" href="/assets/js/18.255d6ad0.js"><link rel="prefetch" href="/assets/js/19.d6a4cc61.js"><link rel="prefetch" href="/assets/js/20.ab12a26a.js"><link rel="prefetch" href="/assets/js/21.efe91574.js"><link rel="prefetch" href="/assets/js/22.c87353e8.js"><link rel="prefetch" href="/assets/js/23.0d1d44af.js"><link rel="prefetch" href="/assets/js/24.9110c168.js"><link rel="prefetch" href="/assets/js/25.191ad91e.js"><link rel="prefetch" href="/assets/js/26.b48ff2fb.js"><link rel="prefetch" href="/assets/js/27.59bb592a.js"><link rel="prefetch" href="/assets/js/28.b52dd30a.js"><link rel="prefetch" href="/assets/js/29.b0f1a200.js"><link rel="prefetch" href="/assets/js/3.a2e7efd6.js"><link rel="prefetch" href="/assets/js/30.8d263b10.js"><link rel="prefetch" href="/assets/js/31.3de9e18a.js"><link rel="prefetch" href="/assets/js/32.7ab46bd3.js"><link rel="prefetch" href="/assets/js/33.414d9789.js"><link rel="prefetch" href="/assets/js/34.ee28dec8.js"><link rel="prefetch" href="/assets/js/35.9f5b9457.js"><link rel="prefetch" href="/assets/js/36.57abbba3.js"><link rel="prefetch" href="/assets/js/37.5d0bdfc6.js"><link rel="prefetch" href="/assets/js/39.5d0ce58a.js"><link rel="prefetch" href="/assets/js/4.d5193ec3.js"><link rel="prefetch" href="/assets/js/40.cc188046.js"><link rel="prefetch" href="/assets/js/41.1ccc15c8.js"><link rel="prefetch" href="/assets/js/42.b7f0d39a.js"><link rel="prefetch" href="/assets/js/43.aa694136.js"><link rel="prefetch" href="/assets/js/44.48cc0a37.js"><link rel="prefetch" href="/assets/js/45.b6167c45.js"><link rel="prefetch" href="/assets/js/46.5566fae8.js"><link rel="prefetch" href="/assets/js/47.785c40dd.js"><link rel="prefetch" href="/assets/js/48.4b0c2331.js"><link rel="prefetch" href="/assets/js/49.69deb0a5.js"><link rel="prefetch" href="/assets/js/5.79cbe7c1.js"><link rel="prefetch" href="/assets/js/50.83e3541f.js"><link rel="prefetch" href="/assets/js/51.022581a3.js"><link rel="prefetch" href="/assets/js/52.d4987378.js"><link rel="prefetch" href="/assets/js/53.f6e68690.js"><link rel="prefetch" href="/assets/js/54.e5908b26.js"><link rel="prefetch" href="/assets/js/55.fd21586d.js"><link rel="prefetch" href="/assets/js/56.8d5d4486.js"><link rel="prefetch" href="/assets/js/57.4614524d.js"><link rel="prefetch" href="/assets/js/58.14cde33e.js"><link rel="prefetch" href="/assets/js/59.8d1e5dd0.js"><link rel="prefetch" href="/assets/js/6.2bd77ea1.js"><link rel="prefetch" href="/assets/js/60.e6509ca1.js"><link rel="prefetch" href="/assets/js/61.32961546.js"><link rel="prefetch" href="/assets/js/62.f355dd9a.js"><link rel="prefetch" href="/assets/js/63.43230ff3.js"><link rel="prefetch" href="/assets/js/64.5af8007f.js"><link rel="prefetch" href="/assets/js/65.fe7e36f0.js"><link rel="prefetch" href="/assets/js/66.5202ab0d.js"><link rel="prefetch" href="/assets/js/67.dc162127.js"><link rel="prefetch" href="/assets/js/7.2bde0a66.js"><link rel="prefetch" href="/assets/js/8.27ed2920.js"><link rel="prefetch" href="/assets/js/9.9787f48a.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.74078a8e.css">
+  </head>
+  <body class="theme-mode-light">
+    <div id="app" data-server-rendered="true"><div class="theme-container sidebar-open have-rightmenu"><header class="navbar blur"><div title="目录" class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/img/lfm_title.png" alt="LiFengMing" class="logo"> <span class="site-name can-hide">LiFengMing</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">首页</a></div><div class="nav-item"><a href="/cloudNative/" class="nav-link">云原生</a></div><div class="nav-item"><a href="/middleware/" class="nav-link">中间件</a></div><div class="nav-item"><a href="/technology/" class="nav-link">工具导航</a></div><div class="nav-item"><a href="/resourceNavigation/" class="nav-link">资源导航</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="索引导航" class="dropdown-title"><a href="/categories/" class="link-title">索引导航</a> <span class="title" style="display:none;">索引导航</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/" class="nav-link">分类</a></li><li class="dropdown-item"><!----> <a href="/tags/" class="nav-link">标签</a></li><li class="dropdown-item"><!----> <a href="/archives/" class="nav-link">归档</a></li></ul></div></div><div class="nav-item"><a href="/pages/c92c72/" class="nav-link">关于作者</a></div> <a href="https://github.com/fengmingli" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar-hover-trigger"></div> <aside class="sidebar" style="display:none;"><div class="blogger"><img src="https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200103123203.jpg"> <div class="blogger-info"><h3>LiFengMing</h3> <span>IT届李哥</span></div></div> <nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">首页</a></div><div class="nav-item"><a href="/cloudNative/" class="nav-link">云原生</a></div><div class="nav-item"><a href="/middleware/" class="nav-link">中间件</a></div><div class="nav-item"><a href="/technology/" class="nav-link">工具导航</a></div><div class="nav-item"><a href="/resourceNavigation/" class="nav-link">资源导航</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="索引导航" class="dropdown-title"><a href="/categories/" class="link-title">索引导航</a> <span class="title" style="display:none;">索引导航</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/" class="nav-link">分类</a></li><li class="dropdown-item"><!----> <a href="/tags/" class="nav-link">标签</a></li><li class="dropdown-item"><!----> <a href="/archives/" class="nav-link">归档</a></li></ul></div></div><div class="nav-item"><a href="/pages/c92c72/" class="nav-link">关于作者</a></div> <a href="https://github.com/fengmingli" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>MongoDB</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>DTS</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Kafka</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/9786ddd/" class="sidebar-link">kafka相关文档导航</a></li><li><a href="/pages/9786dd2/" aria-current="page" class="active sidebar-link">docker-compose 快速搭建kafka集群</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/pages/9786d0311/" class="sidebar-link">kafka版本迭代说明</a></li></ul></section></li></ul> </aside> <div><main class="page"><div class="theme-vdoing-wrapper "><div class="articleInfo-wrap" data-v-06225672><div class="articleInfo" data-v-06225672><ul class="breadcrumbs" data-v-06225672><li data-v-06225672><a href="/" title="首页" class="iconfont icon-home router-link-active" data-v-06225672></a></li> <li data-v-06225672><a href="/middleware/#中间件" data-v-06225672>中间件</a></li><li data-v-06225672><a href="/middleware/#Kafka" data-v-06225672>Kafka</a></li></ul> <div class="info" data-v-06225672><div title="作者" class="author iconfont icon-touxiang" data-v-06225672><a href="https://github.com/fengmingli" target="_blank" title="作者" class="beLink" data-v-06225672>LiFengMing</a></div> <div title="创建时间" class="date iconfont icon-riqi" data-v-06225672><a href="javascript:;" data-v-06225672>2023-03-02</a></div> <!----></div></div></div> <!----> <div class="content-wrapper"><div class="right-menu-wrapper"><div class="right-menu-margin"><div class="right-menu-title">目录</div> <div class="right-menu-content"></div></div></div> <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAABH1JREFUSA3tVl1oHFUUPmdmd2ltklqbpJDiNnXFmgbFktho7YMPNiJSSZM0+CAYSkUELVhM6YuwIPpgoOKDqOBDC0XE2CQoNtQXBUFTTcCi+Wlh1V2TQExsUzcltd3M9Tt3ZjZzZ2fT+OJTL8yeM+eee757fmeJbq//KQL8X3DUSFOcfr7cRsRtxNQMWueeVzOkaITIGqQHNg5y8+jNW9ldM7A6nTpAjuolUikAwq7CE3WcM2RRDz+XGVgN3FptU/aUSlvq9Pa3iZ1+sgAqJyyAFqkipd9dqiwHF3P65YycLWc/6sqGrvoEoIp6DOFaX5h6+dnfjkWprwqsPk0dUGq5vySwDImC10KxFHgGL1SWoc92O3eVht09qdXNH11I2SsTsJYqMWzihqGMi+A+Garf3BAuuLI5oGlULyNfyB/HYNujwktOfRrMr5t77NmevqaUopx0grnKAyvVpmwUDB4x6FPXuGvYLTDwWsejwgtgkYKPqRJg8SV6xaiZ3ZTppGneS4yfH5/66fZSDHv+QZci/+h5c5UHtpy67JUqGppM0sh0Nc1dW6/N1W5Yoqat8/TU/VnadmdeW2PLLSyh0cvxBs3KbqTmwYPpxN4do/mzE8nEpvX/UMu2Wbp74zUAK5q6WkHns7V0eWkdPbPzd3rxkTGybadYySumVzhcaJFbs5UrEkQ/+CK8gF5dnh/6ciIZ73gwQ927L1IitoxKLXYP3SjYdOrHHfTZhRRlFyrorafPk20B3HPD1y2G3qKZME5Jcf3t/HUC13/8tSd++vqFveMUTwAUxSUFI1QekR1+bIze3D9MF2aq6cPvG72CgnldWCFqyRw3lwH8ZMerjTD9ElRO7Gv44wNpC90aASqGfVlz/Rx17srQ57/UU26hkhQqUB7dBR71WmzQhHUnblGmVOEw0jhbV1n9OlXUDCIRGaNV5Jp43N516fN7JmnTHdfp7Hgy0luO4aMhtkLL8Bi3bUWYvzh5Mn1dTxrL6QmGuRhGL/TiTTxRoEdTszSaq9GR0NGA3KdkOz3hqSV3MIDhQ5IVX/Ivx3umBti2es2h4eZby7x8br1rkf7Mo90AqC8aQ3sJeNzqFRu+vSANAQe3PL7l0HGOAdwDCeZYvNKeoZp1Qfs6Aipndh86HmFRi0LAnEO47wsqM6cdfjh3jBPUzhZy7nvlUfFsamED1VQt6aISHVymXZ/B2aCtIG8AI8xfobj2d3en1wWVhOeHELKmLQ1s211s88comkv4UCwWyF787mJdYXtNfhKAXVqnKTq8QZvGAGGOfaTo5pGZ/PwbUCr5+DPr/1J92JNHr9aOl/F3iI5+O1nfybsGxoimvZ3ViWSluDITw3P37mypheDIPY0tw7+O/5ApbkYw+zpfaUVu32Pi98+defdUhEpZkRFq0aqyNh9FuL9hpYbEm6iwi0z2REd09ZmyENEbuhjDWzKvZXTqKYaBIr3tt5kuPtQBZFvEUwHt60vfCNu41XsksH9Ij1BMMz1Y0OOunHNShFIP5868g5zeXmuLwL9T4b6Q2+KejgAAAABJRU5ErkJggg==">docker-compose 快速搭建kafka集群<!----></h1>  <div class="theme-vdoing-content content__default"><div class="custom-block tip"><p class="custom-block-title">问题</p> <p>最近，在kafka部署的时候遇到一些坑，这里写下这篇文章沉淀。这里主要记录两种搭建方式：</p> <ul><li>无密码高可用kafka搭建</li> <li>有密码高可用kafka搭建</li></ul></div> <h3 id="无密码高可用kafka搭建"><a href="#无密码高可用kafka搭建" class="header-anchor">#</a> 无密码高可用kafka搭建</h3> <p>install_kafka.sh脚本内容如下：</p> <div class="language-shell line-numbers-mode"><pre class="language-shell"><code><span class="token shebang important">#!/bin/bash</span>
+
+<span class="token builtin class-name">set</span> <span class="token parameter variable">-e</span>
+<span class="token assign-left variable">IP_ADDR</span><span class="token operator">=</span><span class="token variable">$1</span>
+
+<span class="token assign-left variable">ZOOKEEPER_IMAGE</span><span class="token operator">=</span>zookeeper:3.5.9
+<span class="token assign-left variable">KAFKA_IMAGE</span><span class="token operator">=</span>confluentinc/cp-kafka:5.5.0
+
+
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token operator">!</span> <span class="token variable">$IP_ADDR</span> <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;address is empty, please input the ip address of this host.&quot;</span>
+<span class="token builtin class-name">exit</span> <span class="token number">1</span>
+<span class="token keyword">fi</span>
+
+<span class="token assign-left variable">CURR_DIR</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span> <span class="token builtin class-name">cd</span> <span class="token string">&quot;<span class="token variable"><span class="token variable">$(</span> <span class="token function">dirname</span> <span class="token string">&quot;<span class="token variable">${<span class="token environment constant">BASH_SOURCE</span><span class="token punctuation">[</span>0<span class="token punctuation">]</span>}</span>&quot;</span> <span class="token variable">)</span></span>&quot;</span> <span class="token operator">&amp;&amp;</span> <span class="token builtin class-name">pwd</span> <span class="token variable">)</span></span>
+
+<span class="token assign-left variable">DC_EXIST</span><span class="token operator">=</span><span class="token variable"><span class="token variable">`</span><span class="token function">docker-compose</span> <span class="token parameter variable">-version</span> <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'{print $3}'</span><span class="token variable">`</span></span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token operator">!</span> <span class="token variable">${DC_EXIST<span class="token operator">%</span>?}</span> <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+<span class="token function">curl</span> <span class="token parameter variable">-L</span> <span class="token string">&quot;https://github.com/docker/compose/releases/download/1.29.1/docker-compose-<span class="token variable"><span class="token variable">$(</span><span class="token function">uname</span> <span class="token parameter variable">-s</span><span class="token variable">)</span></span>-<span class="token variable"><span class="token variable">$(</span><span class="token function">uname</span> <span class="token parameter variable">-m</span><span class="token variable">)</span></span>&quot;</span> <span class="token parameter variable">-o</span> /usr/local/bin/docker-compose
+<span class="token function">chmod</span> +x /usr/local/bin/docker-compose
+<span class="token function">ln</span> <span class="token parameter variable">-s</span> /usr/local/bin/docker-compose /usr/bin/docker-compose
+<span class="token keyword">fi</span>
+
+<span class="token function">docker-compose</span> <span class="token parameter variable">-version</span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$?</span> <span class="token parameter variable">-ne</span> <span class="token number">0</span> <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;docker-compose install failed, please check.&quot;</span>
+<span class="token builtin class-name">exit</span> <span class="token number">1</span>
+<span class="token keyword">fi</span>
+
+<span class="token comment">#Create network for zookeeper-kafka cluster</span>
+<span class="token assign-left variable">zknet</span><span class="token operator">=</span><span class="token variable"><span class="token variable">`</span><span class="token function">docker</span> network <span class="token function">ls</span> <span class="token operator">|</span> <span class="token function">grep</span> zookeeper_kafka <span class="token operator">|</span> <span class="token function">awk</span> <span class="token punctuation">{</span><span class="token string">'print $2'</span><span class="token punctuation">}</span><span class="token variable">`</span></span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-n</span> <span class="token string">&quot;<span class="token variable">$zknet</span>&quot;</span> <span class="token punctuation">]</span>
+<span class="token keyword">then</span>
+    <span class="token builtin class-name">echo</span> <span class="token string">'The zookeeper_kafka is already existed.'</span>
+<span class="token keyword">else</span>
+    <span class="token builtin class-name">echo</span> <span class="token string">'Create zookeeper_kafka.'</span>
+    <span class="token function">docker</span> network create <span class="token parameter variable">--subnet</span> <span class="token number">172.30</span>.0.0/16 zookeeper_kafka
+<span class="token keyword">fi</span>
+
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;create local dir for kafka cluster&quot;</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/kafka_data/kafka0/data
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/kafka_data/kafka1/data
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/kafka_data/kafka2/data
+
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;create local dir for zookeeper cluster&quot;</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper0/<span class="token punctuation">{</span>data,datalog<span class="token punctuation">}</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper1/<span class="token punctuation">{</span>data,datalog<span class="token punctuation">}</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper2/<span class="token punctuation">{</span>data,datalog<span class="token punctuation">}</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token operator">!</span> <span class="token parameter variable">-e</span> <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml <span class="token operator">&lt;&lt;</span> <span class="token string">EOF
+version: '3.3'
+
+services:
+  zookeeper0:
+    image: <span class="token variable">$ZOOKEEPER_IMAGE</span>
+    restart: always
+    hostname: zookeeper0
+    container_name: zookeeper0
+    ports:
+    - 12181:2181
+    volumes:
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper0/data:/data
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper0/datalog:/datalog
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zookeeper1:2888:3888;2181 server.3=zookeeper2:2888:3888;2181
+  zookeeper1:
+    image: <span class="token variable">$ZOOKEEPER_IMAGE</span>
+    restart: always
+    hostname: zookeeper1
+    container_name: zookeeper1
+    ports:
+    - 12182:2181
+    volumes:
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper1/data:/data
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper1/datalog:/datalog
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zookeeper0:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zookeeper2:2888:3888;2181
+  zookeeper2:
+    image: <span class="token variable">$ZOOKEEPER_IMAGE</span>
+    restart: always
+    hostname: zookeeper2
+    container_name: zookeeper2
+    ports:
+    - 12183:2181
+    volumes:
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper2/data:/data
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper2/datalog:/datalog
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zookeeper0:2888:3888;2181 server.2=zookeeper1:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+  kafka0:
+    image: <span class="token variable">$KAFKA_IMAGE</span>
+    restart: always
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+    container_name: kafka0
+    ports:
+      - 19092:9092
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://<span class="token variable">$IP_ADDR</span>:19092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+      KAFKA_BROKER_ID: 0
+      KAFKA_LOG_DIRS: /opt/kafka/data/logs
+    volumes:
+      - <span class="token variable">$CURR_DIR</span>/kafka_data/kafka0/data:/opt/kafka/data
+  kafka1:
+    image: <span class="token variable">$KAFKA_IMAGE</span>
+    restart: always
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+    container_name: kafka1
+    ports:
+      - 19093:9093
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://<span class="token variable">$IP_ADDR</span>:19093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG_DIRS: /opt/kafka/data/logs
+    volumes:
+      - <span class="token variable">$CURR_DIR</span>/kafka_data/kafka1/data:/opt/kafka/data
+  kafka2:
+    image: <span class="token variable">$KAFKA_IMAGE</span>
+    restart: always
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+    container_name: kafka2
+    ports:
+      - 19094:9094
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://<span class="token variable">$IP_ADDR</span>:19094
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9094
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+      KAFKA_BROKER_ID: 2
+      KAFKA_LOG_DIRS: /opt/kafka/data/logs
+    volumes:
+      - <span class="token variable">$CURR_DIR</span>/kafka_data/kafka2/data:/opt/kafka/data
+networks:
+  default:
+    external:
+      name: zookeeper_kafka
+EOF</span>
+<span class="token keyword">fi</span>
+
+<span class="token comment">#创建启动脚本</span>
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/startup.sh <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+#!/bin/bash
+
+docker-compose -f <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml up -d
+
+docker-compose -f <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml ps
+
+EOF</span>
+
+<span class="token comment">#创建停止脚本</span>
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/stop.sh <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+#!/bin/bash
+
+docker-compose -f <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml down
+
+EOF</span>
+
+<span class="token comment">#赋予shell脚本可执行权限</span>
+<span class="token function">chmod</span> +x <span class="token variable">$CURR_DIR</span>/*.sh
+
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br><span class="line-number">150</span><br><span class="line-number">151</span><br><span class="line-number">152</span><br><span class="line-number">153</span><br><span class="line-number">154</span><br><span class="line-number">155</span><br><span class="line-number">156</span><br><span class="line-number">157</span><br><span class="line-number">158</span><br><span class="line-number">159</span><br><span class="line-number">160</span><br><span class="line-number">161</span><br><span class="line-number">162</span><br><span class="line-number">163</span><br><span class="line-number">164</span><br><span class="line-number">165</span><br><span class="line-number">166</span><br><span class="line-number">167</span><br><span class="line-number">168</span><br><span class="line-number">169</span><br><span class="line-number">170</span><br><span class="line-number">171</span><br><span class="line-number">172</span><br><span class="line-number">173</span><br><span class="line-number">174</span><br><span class="line-number">175</span><br></div></div><ol><li><strong>准备脚本</strong></li></ol> <blockquote><p>sh install_kafka.sh $你的主机_ip</p></blockquote> <ol start="2"><li><strong>部署</strong></li></ol> <blockquote><p>sh startup.sh</p></blockquote> <ol start="3"><li><strong>停止</strong></li></ol> <blockquote><p>sh stop.sh</p></blockquote> <h3 id="有密码高可用kafka搭建"><a href="#有密码高可用kafka搭建" class="header-anchor">#</a> 有密码高可用kafka搭建</h3> <div class="language-shell line-numbers-mode"><pre class="language-shell"><code>
+<span class="token comment">#!/bin/bash</span>
+<span class="token builtin class-name">set</span> <span class="token parameter variable">-e</span>
+ 
+<span class="token comment">#image</span>
+<span class="token assign-left variable">KAFKA_IMAGE</span><span class="token operator">=</span>confluentinc/cp-kafka:5.5.0
+<span class="token assign-left variable">ZOOKEEPER_IMAGE</span><span class="token operator">=</span>zookeeper:3.5.5
+  
+<span class="token assign-left variable">IP_ADDR</span><span class="token operator">=</span><span class="token variable">$1</span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token operator">!</span> <span class="token variable">$IP_ADDR</span> <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;address is empty, please input the ip address of this host.&quot;</span>
+<span class="token builtin class-name">exit</span> <span class="token number">1</span>
+<span class="token keyword">fi</span>
+  
+<span class="token assign-left variable">CURR_DIR</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span> <span class="token builtin class-name">cd</span> <span class="token string">&quot;<span class="token variable"><span class="token variable">$(</span> <span class="token function">dirname</span> <span class="token string">&quot;<span class="token variable">${<span class="token environment constant">BASH_SOURCE</span><span class="token punctuation">[</span>0<span class="token punctuation">]</span>}</span>&quot;</span> <span class="token variable">)</span></span>&quot;</span> <span class="token operator">&amp;&amp;</span> <span class="token builtin class-name">pwd</span> <span class="token variable">)</span></span>
+ 
+<span class="token assign-left variable">DC_EXIST</span><span class="token operator">=</span><span class="token variable"><span class="token variable">`</span><span class="token function">docker-compose</span> <span class="token parameter variable">-version</span> <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'{print $3}'</span><span class="token variable">`</span></span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token operator">!</span> <span class="token variable">${DC_EXIST<span class="token operator">%</span>?}</span> <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+<span class="token function">curl</span> <span class="token parameter variable">-L</span> <span class="token string">&quot;https://github.com/docker/compose/releases/download/1.29.1/docker-compose-<span class="token variable"><span class="token variable">$(</span><span class="token function">uname</span> <span class="token parameter variable">-s</span><span class="token variable">)</span></span>-<span class="token variable"><span class="token variable">$(</span><span class="token function">uname</span> <span class="token parameter variable">-m</span><span class="token variable">)</span></span>&quot;</span> <span class="token parameter variable">-o</span> /usr/local/bin/docker-compose
+<span class="token function">chmod</span> +x /usr/local/bin/docker-compose
+<span class="token function">ln</span> <span class="token parameter variable">-s</span> /usr/local/bin/docker-compose /usr/bin/docker-compose
+<span class="token keyword">fi</span>
+ 
+<span class="token function">docker-compose</span> <span class="token parameter variable">-version</span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$?</span> <span class="token parameter variable">-ne</span> <span class="token number">0</span> <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;docker-compose install failed, please check.&quot;</span>
+<span class="token builtin class-name">exit</span> <span class="token number">1</span>
+<span class="token keyword">fi</span>
+ 
+<span class="token comment">#Create network for zookeeper-kafka cluster</span>
+<span class="token assign-left variable">zknet</span><span class="token operator">=</span><span class="token variable"><span class="token variable">`</span><span class="token function">docker</span> network <span class="token function">ls</span> <span class="token operator">|</span> <span class="token function">grep</span> zookeeper_kafka <span class="token operator">|</span> <span class="token function">awk</span> <span class="token punctuation">{</span><span class="token string">'print $2'</span><span class="token punctuation">}</span><span class="token variable">`</span></span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-n</span> <span class="token string">&quot;<span class="token variable">$zknet</span>&quot;</span> <span class="token punctuation">]</span>
+<span class="token keyword">then</span>
+    <span class="token builtin class-name">echo</span> <span class="token string">'The zookeeper_kafka is already existed.'</span>
+<span class="token keyword">else</span>
+    <span class="token builtin class-name">echo</span> <span class="token string">'Create zookeeper_kafka.'</span>
+    <span class="token function">docker</span> network create <span class="token parameter variable">--subnet</span> <span class="token number">172.30</span>.0.0/16 zookeeper_kafka
+<span class="token keyword">fi</span>
+  
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;create local dir for kafka cluster&quot;</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/kafka_data/kafka0/data
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/kafka_data/kafka1/data
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/kafka_data/kafka2/data
+  
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;create local dir for zookeeper cluster&quot;</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper0/<span class="token punctuation">{</span>data,datalog<span class="token punctuation">}</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper1/<span class="token punctuation">{</span>data,datalog<span class="token punctuation">}</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper2/<span class="token punctuation">{</span>data,datalog<span class="token punctuation">}</span>
+ 
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/conf/security/kafka
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$CURR_DIR</span>/conf/security/zookeeper
+ 
+ 
+  
+  
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token operator">!</span> <span class="token parameter variable">-e</span> <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml <span class="token operator">&lt;&lt;</span> <span class="token string">EOF
+version: '3.3'
+  
+services:
+  zookeeper0:
+    image: <span class="token variable">$ZOOKEEPER_IMAGE</span>
+    restart: always
+    hostname: zookeeper0
+    container_name: zookeeper0
+    ports:
+    - 12181:2181
+    volumes:
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper0/data:/data
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper0/datalog:/datalog
+    - <span class="token variable">$CURR_DIR</span>/conf/security/zookeeper:/conf/jaas
+    - <span class="token variable">$CURR_DIR</span>/conf/zoo.cfg:/conf/zoo.cfg
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_AUTOPURGE_PURGEINTERVAL: 0
+      ZOO_AUTOPURGE_SNAPRETAINCOUNT: 3
+      ZOO_4LW_COMMANDS_WHITELIST: &quot;*&quot;
+      ZOO_MAX_CLIENT_CNXNS: 60
+      ZOO_STANDALONE_ENABLED: &quot;false&quot;
+      ZOO_TICK_TIME: 2000
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zookeeper1:2888:3888;2181 server.3=zookeeper2:2888:3888;2181
+      JVMFLAGS: -Djava.security.auth.login.config=/conf/jaas/kafka_zk_jaas.conf
+  zookeeper1:
+    image: <span class="token variable">$ZOOKEEPER_IMAGE</span>
+    restart: always
+    hostname: zookeeper1
+    container_name: zookeeper1
+    ports:
+    - 12182:2181
+    volumes:
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper1/data:/data
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper1/datalog:/datalog
+    - <span class="token variable">$CURR_DIR</span>/conf/security/zookeeper:/conf/jaas
+    - <span class="token variable">$CURR_DIR</span>/conf/zoo.cfg:/conf/zoo.cfg
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_AUTOPURGE_PURGEINTERVAL: 0
+      ZOO_AUTOPURGE_SNAPRETAINCOUNT: 3
+      ZOO_4LW_COMMANDS_WHITELIST: &quot;*&quot;
+      ZOO_MAX_CLIENT_CNXNS: 60
+      ZOO_STANDALONE_ENABLED: &quot;false&quot;
+      ZOO_TICK_TIME: 20000
+      ZOO_SERVERS: server.1=zookeeper0:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zookeeper2:2888:3888;2181
+      JVMFLAGS: -Djava.security.auth.login.config=/conf/jaas/kafka_zk_jaas.conf
+  zookeeper2:
+    image: <span class="token variable">$ZOOKEEPER_IMAGE</span>
+    restart: always
+    hostname: zookeeper2
+    container_name: zookeeper2
+    ports:
+    - 12183:2181
+    volumes:
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper2/data:/data
+    - <span class="token variable">$CURR_DIR</span>/zookeeper_data/zookeeper2/datalog:/datalog
+    - <span class="token variable">$CURR_DIR</span>/conf/security/zookeeper:/conf/jaas
+    - <span class="token variable">$CURR_DIR</span>/conf/zoo.cfg:/conf/zoo.cfg
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_AUTOPURGE_PURGEINTERVAL: 0
+      ZOO_AUTOPURGE_SNAPRETAINCOUNT: 3
+      ZOO_4LW_COMMANDS_WHITELIST: &quot;*&quot;
+      ZOO_MAX_CLIENT_CNXNS: 60
+      ZOO_STANDALONE_ENABLED: &quot;false&quot;
+      ZOO_TICK_TIME: 2000
+      ZOO_SERVERS: server.1=zookeeper0:2888:3888;2181 server.2=zookeeper1:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+      JVMFLAGS: -Djava.security.auth.login.config=/conf/jaas/kafka_zk_jaas.conf
+  kafka0:
+    image: <span class="token variable">$KAFKA_IMAGE</span>
+    restart: always
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+    container_name: kafka0
+    ports:
+      - 19092:9092
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://<span class="token variable">$IP_ADDR</span>:19092
+      KAFKA_LISTENERS: SASL_PLAINTEXT://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+      KAFKA_BROKER_ID: 0
+      KAFKA_LOG_DIRS: /opt/kafka/data/logs
+      KAFKA_SUPER_USERS: User:admin;User:hxdts
+      KAFKA_ZOOKEEPER_SASL_CLIENT: &quot;false&quot;
+      KAFKA_ZOOKEEPER_SET_ACL: &quot;true&quot;
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: &quot;false&quot;
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: &quot;false&quot;
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: &quot;SASL_PLAINTEXT&quot;
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: &quot;SCRAM-SHA-256&quot;
+      KAFKA_SASL_ENABLED_MECHANISMS: &quot;SCRAM-SHA-256&quot;
+      KAFKA_AUTHORIZER_CLASS_NAME: &quot;kafka.security.auth.SimpleAclAuthorizer&quot;
+      KAFKA_OPTS: -Djava.security.auth.login.config=/conf/kafka/jaas/kafka-server-jaas.conf
+    volumes:
+      - <span class="token variable">$CURR_DIR</span>/kafka_data/kafka0/data:/opt/kafka/data
+      - <span class="token variable">$CURR_DIR</span>/conf/security/kafka:/conf/kafka/jaas
+  kafka1:
+    image: <span class="token variable">$KAFKA_IMAGE</span>
+    restart: always
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+    container_name: kafka1
+    ports:
+      - 19093:9093
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://<span class="token variable">$IP_ADDR</span>:19093
+      KAFKA_LISTENERS: SASL_PLAINTEXT://0.0.0.0:9093
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG_DIRS: /opt/kafka/data/logs
+      KAFKA_SUPER_USERS: User:admin;User:hxdts
+      KAFKA_ZOOKEEPER_SASL_CLIENT: &quot;false&quot;
+      KAFKA_ZOOKEEPER_SET_ACL: &quot;true&quot;
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: &quot;false&quot;
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: &quot;false&quot;
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: &quot;SASL_PLAINTEXT&quot;
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: &quot;SCRAM-SHA-256&quot;
+      KAFKA_SASL_ENABLED_MECHANISMS: &quot;SCRAM-SHA-256&quot;
+      KAFKA_AUTHORIZER_CLASS_NAME: &quot;kafka.security.auth.SimpleAclAuthorizer&quot;
+      KAFKA_OPTS: -Djava.security.auth.login.config=/conf/kafka/jaas/kafka-server-jaas.conf
+    volumes:
+      - <span class="token variable">$CURR_DIR</span>/kafka_data/kafka1/data:/opt/kafka/data
+      - <span class="token variable">$CURR_DIR</span>/conf/security/kafka:/conf/kafka/jaas
+  kafka2:
+    image: <span class="token variable">$KAFKA_IMAGE</span>
+    restart: always
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+    container_name: kafka2
+    ports:
+      - 19094:9094
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://<span class="token variable">$IP_ADDR</span>:19094
+      KAFKA_LISTENERS: SASL_PLAINTEXT://0.0.0.0:9094
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+      KAFKA_BROKER_ID: 2
+      KAFKA_LOG_DIRS:  /opt/kafka/data/logs
+      KAFKA_SUPER_USERS: User:admin;User:hxdts
+      KAFKA_ZOOKEEPER_SASL_CLIENT: &quot;false&quot;
+      KAFKA_ZOOKEEPER_SET_ACL: &quot;true&quot;
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: &quot;false&quot;
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: &quot;false&quot;
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: &quot;SASL_PLAINTEXT&quot;
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: &quot;SCRAM-SHA-256&quot;
+      KAFKA_SASL_ENABLED_MECHANISMS: &quot;SCRAM-SHA-256&quot;
+      KAFKA_AUTHORIZER_CLASS_NAME: &quot;kafka.security.auth.SimpleAclAuthorizer&quot;
+      KAFKA_OPTS: -Djava.security.auth.login.config=/conf/kafka/jaas/kafka-server-jaas.conf
+    volumes:
+      - <span class="token variable">$CURR_DIR</span>/kafka_data/kafka2/data:/opt/kafka/data
+      - <span class="token variable">$CURR_DIR</span>/conf/security/kafka:/conf/kafka/jaas
+networks:
+  default:
+    external:
+      name: zookeeper_kafka
+EOF</span>
+<span class="token keyword">fi</span>
+  
+<span class="token comment">#创建启动脚本</span>
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/startup.sh <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+#!/bin/bash
+  
+docker-compose -f <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml up -d
+ 
+docker-compose -f <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml ps
+  
+EOF</span>
+  
+<span class="token comment">#创建停止脚本</span>
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/stop.sh <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+#!/bin/bash
+  
+docker-compose -f <span class="token variable">$CURR_DIR</span>/kafka-compose.yaml down
+  
+EOF</span>
+  
+<span class="token comment">#赋予shell脚本可执行权限</span>
+<span class="token function">chmod</span> +x <span class="token variable">$CURR_DIR</span>/*.sh
+ 
+ 
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/conf/security/zookeeper/kafka_zk_jaas.conf <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+Server {
+    org.apache.zookeeper.server.auth.DigestLoginModule required
+    user_admin=&quot;kafka123456&quot;;
+};
+EOF</span>
+ 
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/conf/security/kafka/kafka-server-jaas.conf <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+KafkaServer {
+    org.apache.kafka.common.security.scram.ScramLoginModule required
+    username=&quot;admin&quot;
+    password=&quot;kafka123456&quot;;
+};
+ 
+KafkaClient {
+    org.apache.kafka.common.security.scram.ScramLoginModule required
+    username=&quot;admin&quot;
+    password=&quot;kafka123456&quot;;
+};
+ 
+Client {
+    org.apache.zookeeper.server.auth.DigestLoginModule required
+    username=&quot;admin&quot;
+    password=&quot;kafka123456&quot;;
+};
+EOF</span>
+ 
+<span class="token function">cat</span> <span class="token operator">&gt;</span> <span class="token variable">$CURR_DIR</span>/conf/zoo.cfg <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+clientPort=2181
+dataDir=/data
+dataLogDir=/data/log
+tickTime=2000
+initLimit=10
+syncLimit=10
+maxClientCnxns=60
+minSessionTimeout= 4000
+maxSessionTimeout= 40000
+autopurge.snapRetainCount=3
+autopurge.purgeInterval=0
+4lw.commands.whitelist=*
+authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+requireClientAuthScheme=sasl
+standaloneEnabled=true
+admin.enableServer=true
+server.1=zookeeper0:2888:3888;2181
+server.2=zookeeper1:2888:3888;2181
+server.3=zookeeper2:2888:3888;2181
+EOF</span>
+   
+
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br><span class="line-number">150</span><br><span class="line-number">151</span><br><span class="line-number">152</span><br><span class="line-number">153</span><br><span class="line-number">154</span><br><span class="line-number">155</span><br><span class="line-number">156</span><br><span class="line-number">157</span><br><span class="line-number">158</span><br><span class="line-number">159</span><br><span class="line-number">160</span><br><span class="line-number">161</span><br><span class="line-number">162</span><br><span class="line-number">163</span><br><span class="line-number">164</span><br><span class="line-number">165</span><br><span class="line-number">166</span><br><span class="line-number">167</span><br><span class="line-number">168</span><br><span class="line-number">169</span><br><span class="line-number">170</span><br><span class="line-number">171</span><br><span class="line-number">172</span><br><span class="line-number">173</span><br><span class="line-number">174</span><br><span class="line-number">175</span><br><span class="line-number">176</span><br><span class="line-number">177</span><br><span class="line-number">178</span><br><span class="line-number">179</span><br><span class="line-number">180</span><br><span class="line-number">181</span><br><span class="line-number">182</span><br><span class="line-number">183</span><br><span class="line-number">184</span><br><span class="line-number">185</span><br><span class="line-number">186</span><br><span class="line-number">187</span><br><span class="line-number">188</span><br><span class="line-number">189</span><br><span class="line-number">190</span><br><span class="line-number">191</span><br><span class="line-number">192</span><br><span class="line-number">193</span><br><span class="line-number">194</span><br><span class="line-number">195</span><br><span class="line-number">196</span><br><span class="line-number">197</span><br><span class="line-number">198</span><br><span class="line-number">199</span><br><span class="line-number">200</span><br><span class="line-number">201</span><br><span class="line-number">202</span><br><span class="line-number">203</span><br><span class="line-number">204</span><br><span class="line-number">205</span><br><span class="line-number">206</span><br><span class="line-number">207</span><br><span class="line-number">208</span><br><span class="line-number">209</span><br><span class="line-number">210</span><br><span class="line-number">211</span><br><span class="line-number">212</span><br><span class="line-number">213</span><br><span class="line-number">214</span><br><span class="line-number">215</span><br><span class="line-number">216</span><br><span class="line-number">217</span><br><span class="line-number">218</span><br><span class="line-number">219</span><br><span class="line-number">220</span><br><span class="line-number">221</span><br><span class="line-number">222</span><br><span class="line-number">223</span><br><span class="line-number">224</span><br><span class="line-number">225</span><br><span class="line-number">226</span><br><span class="line-number">227</span><br><span class="line-number">228</span><br><span class="line-number">229</span><br><span class="line-number">230</span><br><span class="line-number">231</span><br><span class="line-number">232</span><br><span class="line-number">233</span><br><span class="line-number">234</span><br><span class="line-number">235</span><br><span class="line-number">236</span><br><span class="line-number">237</span><br><span class="line-number">238</span><br><span class="line-number">239</span><br><span class="line-number">240</span><br><span class="line-number">241</span><br><span class="line-number">242</span><br><span class="line-number">243</span><br><span class="line-number">244</span><br><span class="line-number">245</span><br><span class="line-number">246</span><br><span class="line-number">247</span><br><span class="line-number">248</span><br><span class="line-number">249</span><br><span class="line-number">250</span><br><span class="line-number">251</span><br><span class="line-number">252</span><br><span class="line-number">253</span><br><span class="line-number">254</span><br><span class="line-number">255</span><br><span class="line-number">256</span><br><span class="line-number">257</span><br><span class="line-number">258</span><br><span class="line-number">259</span><br><span class="line-number">260</span><br><span class="line-number">261</span><br><span class="line-number">262</span><br><span class="line-number">263</span><br><span class="line-number">264</span><br><span class="line-number">265</span><br><span class="line-number">266</span><br><span class="line-number">267</span><br><span class="line-number">268</span><br><span class="line-number">269</span><br><span class="line-number">270</span><br><span class="line-number">271</span><br><span class="line-number">272</span><br><span class="line-number">273</span><br><span class="line-number">274</span><br><span class="line-number">275</span><br><span class="line-number">276</span><br><span class="line-number">277</span><br><span class="line-number">278</span><br><span class="line-number">279</span><br><span class="line-number">280</span><br><span class="line-number">281</span><br><span class="line-number">282</span><br><span class="line-number">283</span><br><span class="line-number">284</span><br><span class="line-number">285</span><br><span class="line-number">286</span><br><span class="line-number">287</span><br><span class="line-number">288</span><br><span class="line-number">289</span><br><span class="line-number">290</span><br><span class="line-number">291</span><br><span class="line-number">292</span><br><span class="line-number">293</span><br><span class="line-number">294</span><br><span class="line-number">295</span><br></div></div><ol><li><strong>准备脚本</strong></li></ol> <blockquote><p>sh install_kafka.sh $你的主机_ip</p></blockquote> <ol start="2"><li><strong>部署</strong></li></ol> <blockquote><p>sh startup.sh</p></blockquote> <ol start="3"><li><strong>停止</strong></li></ol> <blockquote><p>sh stop.sh</p></blockquote></div></div>  <div class="page-edit"><div class="edit-link"><a href="https://github.com/fengmingli/edit/master/docs/02.中间件/24.Kafka/240002.docker-compose搭建kafka集群.md" target="_blank" rel="noopener noreferrer">编辑</a> <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></div> <div class="tags"><a href="/tags/?tag=project" title="标签">#project</a></div> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">2023/12/03, 22:49:00</span></div></div> <div class="page-nav-wapper"><div class="page-nav-centre-wrap"><a href="/pages/9786ddd/" class="page-nav-centre page-nav-centre-prev"><div class="tooltip">kafka相关文档导航</div></a> <a href="/pages/9786d0311/" class="page-nav-centre page-nav-centre-next"><div class="tooltip">kafka版本迭代说明</div></a></div> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/pages/9786ddd/" class="prev">kafka相关文档导航</a></span> <span class="next"><a href="/pages/9786d0311/">kafka版本迭代说明</a>→
+      </span></p></div></div></div> <div class="article-list"><div class="article-title"><a href="/archives/" class="iconfont icon-bi">最近更新</a></div> <div class="article-wrapper"><dl><dd>01</dd> <dt><a href="/pages/97863b2244/"><div>
+            云原生资源
+            <!----></div></a> <span class="date">05-25</span></dt></dl><dl><dd>02</dd> <dt><a href="/pages/9786d0311/"><div>
+            kafka版本迭代说明
+            <!----></div></a> <span class="date">03-11</span></dt></dl><dl><dd>03</dd> <dt><a href="/pages/97863dd/"><div>
+            K8s技术文档
+            <!----></div></a> <span class="date">01-06</span></dt></dl> <dl><dd></dd> <dt><a href="/archives/" class="more">更多文章&gt;</a></dt></dl></div></div></main></div> <div class="footer"><div class="icons"><a href="mailto:lifengming666@gmail.com" title="发邮件" target="_blank" class="iconfont icon-youjian"></a><a href="https://github.com/fengmingli" title="GitHub" target="_blank" class="iconfont icon-github"></a><a href="https://music.163.com/#/playlist?id=755597173" title="听音乐" target="_blank" class="iconfont icon-erji"></a></div> 
+  Theme by
+  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank" title="本站主题">Vdoing</a> 
+    | Copyright © 2018-2023
+    <span>LiFengMing | <a href="https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/LICENSE" target="_blank">MIT License</a></span></div> <div class="buttons"><div title="返回顶部" class="button blur go-to-top iconfont icon-fanhuidingbu" style="display:none;"></div> <div title="去评论" class="button blur go-to-comment iconfont icon-pinglun" style="display:none;"></div> <div title="主题模式" class="button blur theme-mode-but iconfont icon-zhuti"><ul class="select-box" style="display:none;"><li class="iconfont icon-zidong">
+          跟随系统
+        </li><li class="iconfont icon-rijianmoshi">
+          浅色模式
+        </li><li class="iconfont icon-yejianmoshi">
+          深色模式
+        </li><li class="iconfont icon-yuedu">
+          阅读模式
+        </li></ul></div></div> <!----> <!----> <!----></div><div class="global-ui"><div></div></div></div>
+    <script src="/assets/js/app.89da10ab.js" defer></script><script src="/assets/js/2.8e04b068.js" defer></script><script src="/assets/js/38.2b079d88.js" defer></script>
+  </body>
+</html>
